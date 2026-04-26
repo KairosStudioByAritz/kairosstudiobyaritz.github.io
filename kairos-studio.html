@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kairos Studio — Apps que importan</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy: #1A237E;
+      --mid: #3949AB;
+      --teal: #84CFBB;
+      --teal-light: #B2E4D8;
+      --white: #F8F9FF;
+      --gray: #8A8FA8;
+      --card-bg: #F0F2FF;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--white);
+      color: #1a1a2e;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 48px;
+      background: rgba(248,249,255,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(26,35,126,0.08);
+    }
+
+    .nav-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 20px;
+      color: var(--navy);
+      text-decoration: none;
+      letter-spacing: -0.5px;
+    }
+
+    .nav-logo span { color: var(--teal); }
+
+    nav a.nav-link {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--gray);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    nav a.nav-link:hover { color: var(--navy); }
+
+    nav .nav-links { display: flex; gap: 32px; align-items: center; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 22px;
+      border-radius: 50px;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      font-size: 14px;
+      text-decoration: none;
+      transition: all 0.2s;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-primary {
+      background: var(--navy);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--mid);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(26,35,126,0.25);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--navy);
+      border: 1.5px solid var(--navy);
+    }
+
+    .btn-outline:hover {
+      background: var(--navy);
+      color: #fff;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 120px 48px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 80% 50%, rgba(132,207,187,0.12) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 60% at 10% 80%, rgba(57,73,171,0.08) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(26,35,126,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(26,35,126,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+    }
+
+    .hero-content {
+      max-width: 760px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(132,207,187,0.15);
+      border: 1px solid rgba(132,207,187,0.4);
+      padding: 6px 16px;
+      border-radius: 50px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #2a7a6a;
+      margin-bottom: 28px;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .hero-badge::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--teal);
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(48px, 7vw, 80px);
+      font-weight: 800;
+      line-height: 1.0;
+      letter-spacing: -2px;
+      color: var(--navy);
+      margin-bottom: 24px;
+      animation: fadeUp 0.6s ease 0.1s both;
+    }
+
+    h1 em {
+      font-style: normal;
+      color: var(--teal);
+      position: relative;
+    }
+
+    h1 em::after {
+      content: '';
+      position: absolute;
+      bottom: 4px; left: 0; right: 0;
+      height: 3px;
+      background: var(--teal);
+      border-radius: 2px;
+      opacity: 0.4;
+    }
+
+    .hero-sub {
+      font-size: 18px;
+      line-height: 1.6;
+      color: var(--gray);
+      max-width: 520px;
+      margin-bottom: 40px;
+      font-weight: 300;
+      animation: fadeUp 0.6s ease 0.2s both;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      animation: fadeUp 0.6s ease 0.3s both;
+    }
+
+    .hero-visual {
+      position: absolute;
+      right: 48px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 340px;
+      animation: fadeUp 0.8s ease 0.2s both;
+    }
+
+    .phone-mockup {
+      width: 220px;
+      height: 440px;
+      background: var(--navy);
+      border-radius: 36px;
+      margin: 0 auto;
+      position: relative;
+      box-shadow:
+        0 40px 80px rgba(26,35,126,0.3),
+        0 0 0 8px rgba(255,255,255,0.9),
+        0 0 0 9px rgba(26,35,126,0.1);
+      overflow: hidden;
+    }
+
+    .phone-screen {
+      position: absolute;
+      inset: 12px;
+      border-radius: 26px;
+      background: linear-gradient(135deg, #1B5E20, #2E7D32);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-end;
+      padding: 20px;
+    }
+
+    .phone-label {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 11px;
+      color: rgba(255,255,255,0.6);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .phone-score {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 36px;
+      color: #fff;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .phone-bars {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 12px;
+    }
+
+    .phone-bar {
+      height: 6px;
+      border-radius: 3px;
+      background: rgba(255,255,255,0.15);
+      overflow: hidden;
+    }
+
+    .phone-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      background: var(--teal);
+    }
+
+    .phone-notch {
+      position: absolute;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 20px;
+      background: var(--navy);
+      border-radius: 10px;
+      z-index: 10;
+    }
+
+    /* ── SECTION ── */
+    section { padding: 100px 48px; }
+
+    .section-label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(32px, 4vw, 48px);
+      font-weight: 800;
+      letter-spacing: -1px;
+      color: var(--navy);
+      margin-bottom: 16px;
+      line-height: 1.1;
+    }
+
+    .section-sub {
+      font-size: 16px;
+      color: var(--gray);
+      max-width: 480px;
+      line-height: 1.7;
+      font-weight: 300;
+    }
+
+    /* ── APPS ── */
+    .apps-section { background: #fff; }
+
+    .apps-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 56px;
+      flex-wrap: wrap;
+      gap: 24px;
+    }
+
+    .apps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 24px;
+    }
+
+    .app-card {
+      background: var(--card-bg);
+      border-radius: 24px;
+      padding: 32px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+
+    .app-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 48px rgba(26,35,126,0.12);
+    }
+
+    .app-card::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 180px; height: 180px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(132,207,187,0.2), transparent 70%);
+    }
+
+    .app-icon {
+      width: 60px; height: 60px;
+      border-radius: 16px;
+      background: var(--navy);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+
+    .app-tag {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 50px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+
+    .tag-live { background: rgba(46,125,50,0.1); color: #2E7D32; }
+    .tag-soon { background: rgba(57,73,171,0.1); color: var(--mid); }
+
+    .app-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+
+    .app-desc {
+      font-size: 14px;
+      color: var(--gray);
+      line-height: 1.6;
+      font-weight: 300;
+    }
+
+    .app-footer {
+      margin-top: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .app-platform {
+      font-size: 12px;
+      color: var(--gray);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* ── VALUES ── */
+    .values-section {
+      background: var(--navy);
+      color: #fff;
+    }
+
+    .values-section .section-label { color: var(--teal); }
+    .values-section h2 { color: #fff; }
+    .values-section .section-sub { color: rgba(255,255,255,0.6); }
+
+    .values-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 24px;
+      margin-top: 56px;
+    }
+
+    .value-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 28px;
+      transition: background 0.2s;
+    }
+
+    .value-card:hover { background: rgba(255,255,255,0.08); }
+
+    .value-icon {
+      font-size: 32px;
+      margin-bottom: 16px;
+    }
+
+    .value-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .value-desc {
+      font-size: 14px;
+      color: rgba(255,255,255,0.5);
+      line-height: 1.6;
+      font-weight: 300;
+    }
+
+    /* ── ABOUT ── */
+    .about-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .about-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 40px;
+    }
+
+    .stat-box {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 20px;
+    }
+
+    .stat-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .stat-num span { color: var(--teal); }
+
+    .stat-label {
+      font-size: 13px;
+      color: var(--gray);
+      font-weight: 300;
+    }
+
+    .about-visual {
+      position: relative;
+    }
+
+    .about-card {
+      background: var(--navy);
+      border-radius: 24px;
+      padding: 40px;
+      color: #fff;
+    }
+
+    .about-card-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 20px;
+    }
+
+    .stack-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      font-size: 14px;
+      color: rgba(255,255,255,0.8);
+    }
+
+    .stack-item:last-child { border-bottom: none; }
+
+    .stack-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--teal);
+      flex-shrink: 0;
+    }
+
+    /* ── CONTACT ── */
+    .contact-section { background: #fff; text-align: center; }
+
+    .contact-inner { max-width: 600px; margin: 0 auto; }
+
+    .contact-email {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Syne', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--navy);
+      text-decoration: none;
+      border-bottom: 2px solid var(--teal);
+      padding-bottom: 4px;
+      margin-top: 32px;
+      transition: color 0.2s;
+    }
+
+    .contact-email:hover { color: var(--mid); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--navy);
+      color: rgba(255,255,255,0.5);
+      text-align: center;
+      padding: 32px 48px;
+      font-size: 13px;
+    }
+
+    footer strong { color: rgba(255,255,255,0.9); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      nav { padding: 16px 24px; }
+      .nav-links { gap: 16px; }
+      .hero { padding: 100px 24px 60px; }
+      .hero-visual { display: none; }
+      section { padding: 72px 24px; }
+      .about-inner { grid-template-columns: 1fr; gap: 40px; }
+    }
+
+    @media (max-width: 600px) {
+      .apps-header { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="nav-logo">Kairos<span>Studio</span></a>
+    <div class="nav-links">
+      <a href="#apps" class="nav-link">Apps</a>
+      <a href="#nosotros" class="nav-link">Nosotros</a>
+      <a href="#contacto" class="nav-link">Contacto</a>
+      <a href="mailto:aritz.codes@gmail.com" class="btn btn-primary">Escribenos</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+    <div class="hero-content">
+      <div class="hero-badge">Estudio independiente · España</div>
+      <h1>Apps que<br /><em>importan</em></h1>
+      <p class="hero-sub">
+        Construimos herramientas simples, honestas y bien hechas para personas reales.
+        Sin ruido, sin relleno. Solo lo que necesitas.
+      </p>
+      <div class="hero-actions">
+        <a href="#apps" class="btn btn-primary">Ver nuestras apps</a>
+        <a href="#contacto" class="btn btn-outline">Contactar</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="phone-mockup">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="phone-label">Puntuación media</div>
+          <div class="phone-score">8.94 / 10</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:4px;">3 pruebas · 3 registradas</div>
+          <div class="phone-bars">
+            <div class="phone-bar"><div class="phone-bar-fill" style="width:90%"></div></div>
+            <div class="phone-bar"><div class="phone-bar-fill" style="width:70%"></div></div>
+            <div class="phone-bar"><div class="phone-bar-fill" style="width:100%"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- APPS -->
+  <section class="apps-section" id="apps">
+    <div class="apps-header reveal">
+      <div>
+        <div class="section-label">Nuestras apps</div>
+        <h2>Lo que hemos<br />construido</h2>
+      </div>
+      <p class="section-sub">Cada app nace de una necesidad real. Sin funciones de relleno.</p>
+    </div>
+    <div class="apps-grid">
+      <a href="https://play.google.com/store" target="_blank" class="app-card reveal">
+        <div class="app-icon">🏋️</div>
+        <div class="app-tag tag-live">● Disponible en Android</div>
+        <div class="app-name">OpoRecord</div>
+        <p class="app-desc">Registra tus marcas físicas, temario y psicotécnicos para preparar oposiciones en España. Baremos oficiales incluidos.</p>
+        <div class="app-footer">
+          <span class="app-platform">📱 Android</span>
+          <span style="font-size:13px;color:var(--mid);font-weight:500;">Ver en Play Store →</span>
+        </div>
+      </a>
+      <div class="app-card reveal" style="opacity:0.7;cursor:default;">
+        <div class="app-icon" style="background:var(--card-bg);font-size:28px;">✦</div>
+        <div class="app-tag tag-soon">Próximamente</div>
+        <div class="app-name">Siguiente app</div>
+        <p class="app-desc">Siempre estamos construyendo algo nuevo. Síguenos para no perderte el lanzamiento.</p>
+        <div class="app-footer">
+          <span class="app-platform">🔜 En desarrollo</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VALUES -->
+  <section class="values-section">
+    <div class="reveal">
+      <div class="section-label">Nuestra filosofía</div>
+      <h2>Cómo hacemos<br />las cosas</h2>
+      <p class="section-sub">Principios que guían cada decisión de diseño y desarrollo.</p>
+    </div>
+    <div class="values-grid">
+      <div class="value-card reveal">
+        <div class="value-icon">🎯</div>
+        <div class="value-title">Enfocado</div>
+        <p class="value-desc">Una app hace una cosa bien. Sin funciones innecesarias que compliquen la experiencia.</p>
+      </div>
+      <div class="value-card reveal">
+        <div class="value-icon">🔒</div>
+        <div class="value-title">Privacidad primero</div>
+        <p class="value-desc">Tus datos son tuyos. No vendemos información, no rastreamos sin consentimiento.</p>
+      </div>
+      <div class="value-card reveal">
+        <div class="value-icon">⚡</div>
+        <div class="value-title">Rápido y ligero</div>
+        <p class="value-desc">Las apps que construimos funcionan bien incluso en dispositivos modestos.</p>
+      </div>
+      <div class="value-card reveal">
+        <div class="value-icon">🤝</div>
+        <div class="value-title">Accesible</div>
+        <p class="value-desc">Sin suscripciones agresivas. Modelo honesto: gratis donde importa, premium donde aporta.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="nosotros">
+    <div class="about-inner">
+      <div class="reveal">
+        <div class="section-label">Sobre nosotros</div>
+        <h2>Un estudio pequeño<br />con grandes ideas</h2>
+        <p class="section-sub">
+          Kairos Studio nació en España con una misión simple: hacer apps que de verdad ayuden a la gente en su día a día.
+          Sin inversores, sin presiones, sin compromisos.
+        </p>
+        <div class="about-stats">
+          <div class="stat-box">
+            <div class="stat-num">1<span>+</span></div>
+            <div class="stat-label">App publicada</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num">5<span>+</span></div>
+            <div class="stat-label">Oposiciones cubiertas</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num">0</div>
+            <div class="stat-label">Anuncios intrusivos</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num">100<span>%</span></div>
+            <div class="stat-label">Datos locales</div>
+          </div>
+        </div>
+      </div>
+      <div class="about-visual reveal">
+        <div class="about-card">
+          <div class="about-card-title">Stack tecnológico</div>
+          <div class="stack-item"><span class="stack-dot"></span> Flutter & Dart</div>
+          <div class="stack-item"><span class="stack-dot"></span> Android (iOS próximamente)</div>
+          <div class="stack-item"><span class="stack-dot"></span> Almacenamiento local</div>
+          <div class="stack-item"><span class="stack-dot"></span> Material Design 3</div>
+          <div class="stack-item"><span class="stack-dot"></span> Google Play Store</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="contact-section" id="contacto">
+    <div class="contact-inner reveal">
+      <div class="section-label">Contacto</div>
+      <h2>¿Tienes una idea<br />o feedback?</h2>
+      <p class="section-sub" style="margin:0 auto;">
+        Nos encanta escuchar a los usuarios. Si tienes una sugerencia, un bug que reportar o simplemente quieres hablar, escríbenos.
+      </p>
+      <a href="mailto:aritz.codes@gmail.com" class="contact-email">
+        ✉️ aritz.codes@gmail.com
+      </a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <strong>Kairos Studio</strong> · Hecho con ❤️ en España · © 2025
+  </footer>
+
+  <script>
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), i * 80);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    reveals.forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
