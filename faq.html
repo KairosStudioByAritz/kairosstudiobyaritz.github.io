@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Preguntas Frecuentes — Kairos Studio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy: #1A237E;
+      --mid: #3949AB;
+      --teal: #84CFBB;
+      --white: #F8F9FF;
+      --gray: #8A8FA8;
+      --card-bg: #F0F2FF;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--white);
+      color: #1a1a2e;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 48px;
+      background: rgba(248,249,255,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(26,35,126,0.08);
+    }
+
+    .nav-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 20px;
+      color: var(--navy);
+      text-decoration: none;
+      letter-spacing: -0.5px;
+    }
+    .nav-logo span { color: var(--teal); }
+
+    .nav-back {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--gray);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+    .nav-back:hover { color: var(--navy); }
+
+    /* ── HAMBURGER ── */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+      background: none;
+      border: none;
+    }
+    .hamburger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--navy);
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+    .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 140px 48px 80px;
+      background: var(--navy);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 50% 80% at 90% 50%, rgba(132,207,187,0.1) 0%, transparent 70%),
+        radial-gradient(ellipse 30% 50% at 10% 20%, rgba(57,73,171,0.3) 0%, transparent 60%);
+    }
+
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 760px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(132,207,187,0.15);
+      border: 1px solid rgba(132,207,187,0.3);
+      padding: 6px 16px;
+      border-radius: 50px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--teal);
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(36px, 5vw, 56px);
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      color: #fff;
+      margin-bottom: 16px;
+      line-height: 1.1;
+    }
+
+    .hero-sub {
+      font-size: 16px;
+      color: rgba(255,255,255,0.5);
+      font-weight: 300;
+    }
+
+    /* ── CONTENT ── */
+    .content {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 72px 48px 100px;
+    }
+
+    .faq-item {
+      background: #fff;
+      border: 1px solid rgba(26,35,126,0.08);
+      border-radius: 16px;
+      padding: 28px 32px;
+      margin-bottom: 20px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease, box-shadow 0.2s;
+    }
+
+    .faq-item.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    .faq-item:hover {
+      box-shadow: 0 8px 24px rgba(26,35,126,0.08);
+    }
+
+    .faq-question {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .faq-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(132,207,187,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .faq-q {
+      font-family: 'Syne', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 1.3;
+    }
+
+    .faq-answer {
+      font-size: 16px;
+      line-height: 1.7;
+      color: #444;
+      font-weight: 300;
+      padding-left: 48px;
+    }
+
+    .faq-answer strong {
+      font-weight: 500;
+      color: var(--navy);
+    }
+
+    .contact-box {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 32px;
+      text-align: center;
+      margin-top: 64px;
+    }
+
+    .contact-box h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+
+    .contact-box p {
+      color: var(--gray);
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    .contact-box a {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--navy);
+      color: #fff;
+      font-weight: 600;
+      font-size: 14px;
+      padding: 12px 24px;
+      border-radius: 50px;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+
+    .contact-box a:hover { background: var(--mid); }
+
+    footer {
+      background: var(--navy);
+      color: rgba(255,255,255,0.4);
+      text-align: center;
+      padding: 24px 48px;
+      font-size: 13px;
+    }
+
+    footer strong { color: rgba(255,255,255,0.8); }
+    footer a { color: rgba(255,255,255,0.5); text-decoration: none; }
+    footer a:hover { color: rgba(255,255,255,0.7); }
+
+    @media (max-width: 1024px) {
+      nav { padding: 16px 24px; }
+      .nav-back { display: none; }
+      .hamburger { display: flex; }
+      .hero { padding: 120px 24px 60px; }
+      .content { padding: 48px 24px 80px; }
+      .faq-item { padding: 24px; }
+      .faq-answer { padding-left: 0; margin-top: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-logo">Kairos<span>Studio</span></a>
+    <a href="index.html" class="nav-back">← Volver al inicio</a>
+    <button class="hamburger" id="hamburger" aria-label="Menú" onclick="window.location.href='index.html'">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-grid"></div>
+    <div class="hero-inner">
+      <div class="hero-badge">Centro de ayuda</div>
+      <h1>Preguntas<br />Frecuentes</h1>
+      <p class="hero-sub">Todo lo que necesitas saber sobre OpoRecord y nuestras apps</p>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <div class="faq-item">
+      <div class="faq-question">
+        <div class="faq-icon">💰</div>
+        <h2 class="faq-q">¿Es gratis?</h2>
+      </div>
+      <div class="faq-answer">
+        Sí, OpoRecord es <strong>completamente gratis</strong> sin anuncios ni compras dentro de la app. Puedes usar todas las funciones sin límites: registro de marcas físicas, temario, psicotécnicos, estadísticas y exportación de informes en PDF.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        <div class="faq-icon">📶</div>
+        <h2 class="faq-q">¿Funciona sin conexión a Internet?</h2>
+      </div>
+      <div class="faq-answer">
+        Sí, OpoRecord funciona <strong>100% offline</strong>. Todos tus datos se guardan localmente en tu dispositivo y no necesitas conexión para registrar marcas, consultar estadísticas o exportar informes. Tu información nunca sale de tu móvil.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        <div class="faq-icon">🎯</div>
+        <h2 class="faq-q">¿Para qué oposiciones sirve?</h2>
+      </div>
+      <div class="faq-answer">
+        OpoRecord incluye baremos oficiales de <strong>Policía Nacional, Guardia Civil, Policía Municipal de Madrid, Bomberos Ayuntamiento de Madrid y Bomberos Comunidad de Madrid</strong>. La app calcula automáticamente tu puntuación según el baremo correspondiente a tu edad y sexo.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        <div class="faq-icon">📊</div>
+        <h2 class="faq-q">¿Cómo se calculan las puntuaciones?</h2>
+      </div>
+      <div class="faq-answer">
+        La app usa los <strong>baremos oficiales publicados en los BOE</strong> de cada oposición. Solo introduces tu marca (tiempo, distancia, repeticiones) y OpoRecord calcula automáticamente los puntos que obtendrías en el examen real. Los baremos varían según edad, sexo y oposición.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        <div class="faq-icon">🔒</div>
+        <h2 class="faq-q">¿Se guardan mis datos en la nube?</h2>
+      </div>
+      <div class="faq-answer">
+        <strong>No.</strong> Todos tus datos se almacenan exclusivamente en tu dispositivo. No hay servidores, no hay cuentas de usuario, no hay sincronización. Tus registros, estadísticas y progreso son privados y solo tú tienes acceso. Si desinstalas la app, los datos se eliminan.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        <div class="faq-icon">📱</div>
+        <h2 class="faq-q">¿Está disponible para iPhone?</h2>
+      </div>
+      <div class="faq-answer">
+        De momento OpoRecord solo está disponible para <strong>Android</strong>. Estamos trabajando en la versión para iOS, pero aún no hay fecha confirmada. Síguenos en la web para estar al tanto del lanzamiento.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        <div class="faq-icon">📤</div>
+        <h2 class="faq-q">¿Puedo exportar mis datos?</h2>
+      </div>
+      <div class="faq-answer">
+        Sí, puedes <strong>exportar un informe completo en PDF</strong> con todas tus marcas físicas, puntuaciones y estadísticas. Ideal para compartir con tu preparador o llevar un registro impreso. También puedes compartir marcas individuales directamente desde la app.
+      </div>
+    </div>
+
+    <div class="contact-box">
+      <h3>¿No encuentras lo que buscas?</h3>
+      <p>Estamos aquí para ayudarte. Envíanos tu pregunta y te respondemos lo antes posible.</p>
+      <a href="mailto:aritz.codes@gmail.com">✉️ Contactar</a>
+    </div>
+
+  </div>
+
+  <footer>
+    <strong>Kairos Studio</strong> · Preguntas Frecuentes · © 2026 · 
+    <a href="privacy.html">Política de privacidad</a> · 
+    <a href="index.html">Inicio</a>
+  </footer>
+
+  <script>
+    const items = document.querySelectorAll('.faq-item');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), i * 60);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    items.forEach(el => observer.observe(el));
+  </script>
+
+</body>
+</html>
