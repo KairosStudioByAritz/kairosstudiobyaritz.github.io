@@ -59,7 +59,7 @@
     }
     nav a.nav-link:hover { color: var(--navy); }
 
-    nav .nav-links { display: flex; gap: 32px; align-items: center; }
+    .nav-links { display: none; }
 
     .btn {
       display: inline-flex;
@@ -90,7 +90,7 @@
 
     /* ── HAMBURGER ── */
     .hamburger {
-      display: none;
+      display: flex;
       flex-direction: column;
       gap: 5px;
       cursor: pointer;
@@ -448,7 +448,7 @@
     .reveal.visible { opacity: 1; transform: none; }
 
     /* ── RESPONSIVE ── */
-    @media (max-width: 1024px) {
+    @media (min-width: 1025px) {
       nav { padding: 16px 24px; }
       .nav-links { display: none; }
       .hamburger { display: flex; }
