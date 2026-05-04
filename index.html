@@ -370,8 +370,46 @@
       margin-bottom: 8px;
     }
     .app-desc { font-size: 14px; color: var(--gray); line-height: 1.6; font-weight: 300; }
-    .app-footer { margin-top: 24px; display: flex; align-items: center; justify-content: space-between; }
+    .app-footer {
+      margin-top: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
     .app-platform { font-size: 12px; color: var(--gray); display: flex; align-items: center; gap: 6px; }
+
+    /* ── APP CARD LINKS (for OpoRecord card with two CTAs) ── */
+    .app-card-links {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .app-link-primary {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--navy);
+      background: #fff;
+      border: 1.5px solid rgba(26,35,126,0.2);
+      padding: 6px 14px;
+      border-radius: 50px;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .app-link-primary:hover {
+      background: var(--navy);
+      color: #fff;
+      border-color: var(--navy);
+    }
+    .app-link-secondary {
+      font-size: 13px;
+      color: var(--mid);
+      font-weight: 500;
+      text-decoration: none;
+    }
+    .app-link-secondary:hover { text-decoration: underline; }
 
     /* ── VALUES ── */
     .values-section { background: var(--navy); color: #fff; }
@@ -528,16 +566,23 @@
       <p class="section-sub">Cada app nace de una necesidad real. Sin funciones de relleno.</p>
     </div>
     <div class="apps-grid">
-      <a href="https://play.google.com/store" target="_blank" class="app-card reveal">
+
+      <!-- OpoRecord card — enlaza a la landing dedicada -->
+      <div class="app-card reveal">
         <div class="app-icon">🏋️</div>
         <div class="app-tag tag-live">● Disponible en Android</div>
         <div class="app-name">OpoRecord</div>
         <p class="app-desc">Registra tus marcas físicas, temario y psicotécnicos para preparar oposiciones en España. Baremos oficiales incluidos.</p>
         <div class="app-footer">
           <span class="app-platform">📱 Android</span>
-          <span style="font-size:13px;color:var(--mid);font-weight:500;">Ver en Play Store →</span>
+          <div class="app-card-links">
+            <a href="oporecord.html" class="app-link-primary">Ver más →</a>
+            <a href="https://play.google.com/store" target="_blank" rel="noopener" class="app-link-secondary">Play Store ↗</a>
+          </div>
         </div>
-      </a>
+      </div>
+
+      <!-- Próxima app -->
       <div class="app-card reveal" style="opacity:0.7;cursor:default;">
         <div class="app-icon" style="background:var(--card-bg);font-size:28px;">✦</div>
         <div class="app-tag tag-soon">Próximamente</div>
@@ -547,6 +592,7 @@
           <span class="app-platform">🔜 En desarrollo</span>
         </div>
       </div>
+
     </div>
   </section>
 
