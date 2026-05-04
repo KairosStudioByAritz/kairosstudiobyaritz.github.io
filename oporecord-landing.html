@@ -704,17 +704,14 @@
       gap: var(--space-3xl);
     }
     .faq-header {
-      max-width: 350px;
-      /* ✅ FIX: evita que el título se desborde sobre las preguntas */
+      max-width: 280px;
       min-width: 0;
-      overflow: hidden;
-      overflow-wrap: normal;
       align-self: start;
     }
     .faq-header .section-title {
       margin-top: var(--space-sm);
-      /* ✅ FIX: tamaño de fuente más contenido para esta sección */
-      font-size: clamp(1.5rem, 3vw, 2.25rem);
+      font-size: clamp(1.25rem, 2.2vw, 1.75rem);
+      line-height: 1.15;
     }
     .faq-list { display: flex; flex-direction: column; }
     details {
