@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>OpoRecord: Registra tu preparación física para oposiciones</title>
+  <meta name="description" content="OpoRecord registra tus pruebas físicas con baremos oficiales del BOE, sigue tu progreso y exporta resultados. Sin cuenta, sin servidor, sin internet.">
+  <meta name="theme-color" content="#1c1a14">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@350;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── Tokens ─────────────────────────────────────────────── */
+    :root {
+      --bg:           oklch(11% 0.012 65);
+      --bg-raised:    oklch(16% 0.010 65);
+      --bg-subtle:    oklch(20% 0.008 65);
+      --border:       oklch(27% 0.009 65);
+      --border-light: oklch(32% 0.008 65);
+
+      --text:         oklch(93% 0.007 65);
+      --text-2:       oklch(67% 0.011 65);
+      --text-3:       oklch(54% 0.009 65);
+
+      --amber:        oklch(76% 0.175 72);
+      --amber-dim:    oklch(68% 0.155 72);
+      --amber-glow:   oklch(76% 0.175 72 / 0.15);
+      --amber-subtle: oklch(76% 0.08  72 / 0.12);
+
+      --font-display: 'Syne', system-ui, sans-serif;
+      --font-body:    'Inter', system-ui, sans-serif;
+      --font-mono:    'IBM Plex Mono', 'Menlo', monospace;
+
+      --space-xs:  4px;
+      --space-sm:  8px;
+      --space-md:  16px;
+      --space-lg:  24px;
+      --space-xl:  48px;
+      --space-2xl: 80px;
+      --space-3xl: 128px;
+
+      --radius-sm: 6px;
+      --radius-md: 12px;
+      --radius-lg: 24px;
+      --radius-xl: 40px;
+
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* ── Reset ──────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-weight: 350;
+      line-height: 1.6;
+      letter-spacing: 0.01em;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+    h1, h2, h3 { text-wrap: balance; }
+    p { text-wrap: pretty; }
+
+    /* ── Layout helpers ─────────────────────────────────────── */
+    .container {
+      width: 100%;
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 var(--space-lg);
+    }
+
+    /* ── Reveal animation ───────────────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+    .reveal-delay-5 { transition-delay: 0.5s; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { opacity: 1; transform: none; transition: none; }
+    }
+
+    /* ── Skip link ──────────────────────────────────────────── */
+    .skip-link {
+      position: absolute;
+      top: -100%;
+      left: var(--space-md);
+      background: var(--amber);
+      color: oklch(11% 0.012 65);
+      font-family: var(--font-mono);
+      font-size: 0.875rem;
+      font-weight: 500;
+      padding: 10px 18px;
+      border-radius: var(--radius-sm);
+      z-index: 9999;
+      transition: top 0.15s;
+    }
+    .skip-link:focus { top: var(--space-md); }
+
+    /* ── Nav ────────────────────────────────────────────────── */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: oklch(11% 0.012 65 / 0.88);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      font-family: var(--font-display);
+      font-size: 1.125rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+    }
+    .nav-logo-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--amber);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .nav-cta {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--amber);
+      border: 1px solid oklch(76% 0.175 72 / 0.4);
+      padding: 12px 18px;
+      border-radius: var(--radius-sm);
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .nav-cta:hover,
+    .nav-cta:focus-visible {
+      background: var(--amber-subtle);
+      border-color: var(--amber);
+      outline: 2px solid var(--amber);
+      outline-offset: 2px;
+    }
+
+    /* ── Hero ───────────────────────────────────────────────── */
+    #hero {
+      min-height: calc(100svh - 60px);
+      display: flex;
+      align-items: center;
+      padding: var(--space-2xl) 0;
+      position: relative;
+      overflow: hidden;
+    }
+    #hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 60% 50% at 70% 50%, oklch(30% 0.08 72 / 0.15), transparent);
+      pointer-events: none;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-2xl);
+      align-items: center;
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-2);
+      margin-bottom: var(--space-lg);
+    }
+    .hero-eyebrow-line {
+      width: 32px;
+      height: 1px;
+      background: var(--border-light);
+    }
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      margin-bottom: var(--space-lg);
+    }
+    .hero-title em {
+      font-style: normal;
+      color: var(--amber);
+    }
+    .hero-subtitle {
+      font-size: 1.0625rem;
+      color: var(--text-2);
+      max-width: 52ch;
+      line-height: 1.65;
+      margin-bottom: var(--space-xl);
+    }
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-lg);
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--amber);
+      color: oklch(11% 0.012 65);
+      font-family: var(--font-body);
+      font-weight: 500;
+      font-size: 0.9375rem;
+      padding: 14px 28px;
+      border-radius: var(--radius-sm);
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s var(--ease-out), box-shadow 0.2s;
+    }
+    .btn-primary:hover {
+      background: var(--amber-dim);
+      box-shadow: 0 0 40px var(--amber-glow);
+    }
+    .btn-primary:focus-visible {
+      outline: 2px solid var(--amber);
+      outline-offset: 3px;
+    }
+    .btn-primary svg { flex-shrink: 0; }
+    .score-badge {
+      display: flex;
+      flex-direction: column;
+    }
+    .score-value {
+      font-family: var(--font-mono);
+      font-size: 1.5rem;
+      font-weight: 500;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+    .score-label {
+      font-family: var(--font-mono);
+      font-size: 0.6875rem;
+      font-weight: 400;
+      color: var(--text-3);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    /* ── Phone illustration ─────────────────────────────────── */
+    .hero-visual {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+    .phone-wrap {
+      position: relative;
+      display: flex;
+      gap: 20px;
+      align-items: flex-end;
+    }
+    .phone {
+      width: 210px;
+      height: 420px;
+      background: oklch(8.5% 0.01 65);
+      border: 1.5px solid oklch(30% 0.01 65);
+      border-radius: var(--radius-xl);
+      position: relative;
+      overflow: hidden;
+      box-shadow:
+        0 60px 100px oklch(5% 0.01 65 / 0.8),
+        inset 0 1px 0 oklch(40% 0.01 65 / 0.3);
+      flex-shrink: 0;
+    }
+    .phone::before {
+      content: '';
+      position: absolute;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 30px;
+      background: oklch(6% 0.01 65);
+      border-radius: 30px;
+      z-index: 2;
+    }
+    .phone-secondary {
+      width: 168px;
+      height: 336px;
+      opacity: 0.55;
+      transform: translateY(20px);
+    }
+    .phone-screen {
+      position: absolute;
+      inset: 0;
+      padding: 60px 16px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .screen-label {
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      color: var(--text-3);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .screen-score-row {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+    .screen-score-num {
+      font-family: var(--font-mono);
+      font-size: 1.5rem;
+      color: var(--amber);
+      font-weight: 500;
+    }
+    .screen-score-unit {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--text-3);
+    }
+    .bar-row {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .bar-name {
+      font-family: var(--font-mono);
+      font-size: 0.5rem;
+      color: var(--text-3);
+      letter-spacing: 0.06em;
+    }
+    .bar-track {
+      height: 5px;
+      background: var(--bg-subtle);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      background: var(--amber);
+    }
+    .bar-fill.pass { background: oklch(72% 0.15 145); }
+    .bar-fill.warn { background: oklch(78% 0.16 72); }
+    .bar-fill.fail { background: oklch(60% 0.18 25); }
+
+    /* Secondary phone screen — chart */
+    .screen-chart {
+      padding: 56px 14px 18px;
+    }
+    .chart-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
+      height: 120px;
+      margin-top: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .chart-bar {
+      flex: 1;
+      background: var(--amber-subtle);
+      border-radius: 3px 3px 0 0;
+      border: 1px solid oklch(76% 0.175 72 / 0.25);
+    }
+    .chart-bar.current { background: var(--amber); opacity: 0.9; }
+
+    /* ── Section base ───────────────────────────────────────── */
+    section {
+      padding: var(--space-3xl) 0;
+    }
+    .section-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.6875rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: var(--space-lg);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-eyebrow::before {
+      content: '';
+      display: block;
+      width: 24px;
+      height: 1px;
+      background: var(--amber);
+      opacity: 0.6;
+      flex-shrink: 0;
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.875rem, 4vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      line-height: 1.1;
+    }
+
+    /* ── Features ───────────────────────────────────────────── */
+    #features { border-top: 1px solid var(--border); }
+    .features-header {
+      margin-bottom: var(--space-2xl);
+      max-width: 44ch;
+    }
+    .features-header .section-title { margin-top: var(--space-sm); }
+    .features-list {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+    .feature-item {
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      gap: var(--space-lg);
+      padding: var(--space-xl) 0;
+      border-bottom: 1px solid var(--border);
+      align-items: start;
+    }
+    .feature-item:first-child { border-top: 1px solid var(--border); }
+    .feature-index {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--text-3);
+      letter-spacing: 0.04em;
+      padding-top: 4px;
+      line-height: 1;
+    }
+    .feature-body {}
+    .feature-title {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      line-height: 1.2;
+      margin-bottom: var(--space-sm);
+    }
+    .feature-desc {
+      font-size: 0.9375rem;
+      color: var(--text-2);
+      line-height: 1.6;
+      max-width: 60ch;
+    }
+    .feature-tag {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 0.625rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--amber);
+      background: var(--amber-subtle);
+      border: 1px solid oklch(76% 0.175 72 / 0.2);
+      padding: 2px 8px;
+      border-radius: 3px;
+      margin-top: var(--space-sm);
+    }
+
+    /* ── Privacy section ────────────────────────────────────── */
+    #privacidad {
+      background: var(--bg-raised);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    #privacidad::before {
+      content: '';
+      position: absolute;
+      top: -120px;
+      right: -80px;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(ellipse, oklch(76% 0.175 72 / 0.06), transparent 70%);
+      pointer-events: none;
+    }
+    .privacy-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-2xl);
+      position: relative;
+    }
+    .privacy-statement {
+      font-family: var(--font-display);
+      font-size: clamp(1.75rem, 4.5vw, 3.25rem);
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      line-height: 1.08;
+    }
+    .privacy-statement em {
+      font-style: normal;
+      color: var(--amber);
+    }
+    .privacy-body {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+    }
+    .privacy-body p {
+      font-size: 1rem;
+      color: var(--text-2);
+      line-height: 1.7;
+      max-width: 58ch;
+    }
+    .privacy-body strong { color: var(--text); font-weight: 500; }
+    .privacy-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      margin-top: var(--space-sm);
+    }
+    .privacy-pill {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 400;
+      color: var(--text-2);
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      padding: 6px 14px;
+      border-radius: 999px;
+      letter-spacing: 0.02em;
+    }
+
+    /* ── Screenshots ────────────────────────────────────────── */
+    #capturas { border-top: 1px solid var(--border); }
+    .capturas-header {
+      text-align: center;
+      margin-bottom: var(--space-2xl);
+    }
+    .capturas-header .section-eyebrow { justify-content: center; }
+    .capturas-header .section-eyebrow::before { display: none; }
+    .capturas-header .section-title { margin-top: var(--space-sm); }
+    .phones-row {
+      display: flex;
+      gap: var(--space-xl);
+      justify-content: center;
+      align-items: flex-end;
+      flex-wrap: wrap;
+    }
+    .captura-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-md);
+    }
+    .captura-phone {
+      width: 200px;
+      height: 400px;
+      background: oklch(8.5% 0.01 65);
+      border: 1.5px solid oklch(30% 0.01 65);
+      border-radius: var(--radius-xl);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 40px 80px oklch(5% 0.01 65 / 0.7);
+    }
+    .captura-phone::before {
+      content: '';
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90px;
+      height: 26px;
+      background: oklch(6% 0.01 65);
+      border-radius: 26px;
+      z-index: 2;
+    }
+    .captura-phone.featured {
+      width: 220px;
+      height: 440px;
+      transform: translateY(-20px);
+      box-shadow: 0 60px 100px oklch(5% 0.01 65 / 0.8);
+    }
+    .captura-inner {
+      position: absolute;
+      inset: 0;
+      padding: 54px 14px 20px;
+    }
+    .captura-topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .captura-topbar-title {
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      color: var(--text-2);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .captura-topbar-dot {
+      width: 5px;
+      height: 5px;
+      background: var(--amber);
+      border-radius: 50%;
+    }
+    /* Screen 1 — test list */
+    .test-list { display: flex; flex-direction: column; gap: 8px; }
+    .test-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-subtle);
+      border-radius: 6px;
+      padding: 7px 10px;
+    }
+    .test-row-name {
+      font-family: var(--font-mono);
+      font-size: 0.5rem;
+      color: var(--text-2);
+      letter-spacing: 0.04em;
+    }
+    .test-row-val {
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      font-weight: 500;
+      color: var(--amber);
+    }
+    .test-row-badge {
+      font-size: 0.45rem;
+      padding: 1px 5px;
+      border-radius: 3px;
+      letter-spacing: 0.06em;
+      font-family: var(--font-mono);
+    }
+    .test-row-badge.superado { background: oklch(72% 0.15 145 / 0.15); color: oklch(72% 0.15 145); }
+    .test-row-badge.pendiente { background: oklch(78% 0.16 72 / 0.15); color: oklch(78% 0.16 72); }
+    /* Screen 2 — evolution chart */
+    .evo-chart { margin-top: 8px; }
+    .evo-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+      height: 100px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 4px;
+    }
+    .evo-bar {
+      flex: 1;
+      background: var(--bg-subtle);
+      border-radius: 3px 3px 0 0;
+      border: 1px solid var(--border-light);
+    }
+    .evo-bar.hi { background: var(--amber); border-color: transparent; }
+    .evo-bar.mid { background: oklch(76% 0.175 72 / 0.45); border-color: transparent; }
+    .evo-labels {
+      display: flex;
+      gap: 4px;
+    }
+    .evo-label {
+      flex: 1;
+      font-family: var(--font-mono);
+      font-size: 0.38rem;
+      color: var(--text-3);
+      text-align: center;
+      letter-spacing: 0.04em;
+    }
+    /* Screen 3 — stats */
+    .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px; }
+    .stat-card {
+      background: var(--bg-subtle);
+      border-radius: 6px;
+      padding: 8px;
+    }
+    .stat-card-val {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1;
+      margin-bottom: 3px;
+    }
+    .stat-card-val.amber { color: var(--amber); }
+    .stat-card-label {
+      font-family: var(--font-mono);
+      font-size: 0.42rem;
+      color: var(--text-3);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .captura-label {
+      font-family: var(--font-mono);
+      font-size: 0.6875rem;
+      color: var(--text-3);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    /* ── FAQ ────────────────────────────────────────────────── */
+    #faq { border-top: 1px solid var(--border); }
+    .faq-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-xl);
+    }
+    .faq-header { max-width: 44ch; }
+    .faq-header .section-title { margin-top: var(--space-sm); }
+    .faq-list { display: flex; flex-direction: column; }
+    details {
+      border-bottom: 1px solid var(--border);
+    }
+    details:first-of-type { border-top: 1px solid var(--border); }
+    summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      padding: var(--space-lg) 0;
+      cursor: pointer;
+      list-style: none;
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1.4;
+    }
+    summary::-webkit-details-marker { display: none; }
+    summary:focus-visible {
+      outline: 2px solid var(--amber);
+      outline-offset: 3px;
+      border-radius: 2px;
+    }
+    .faq-icon {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      border: 1px solid var(--border-light);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-3);
+      font-size: 0.875rem;
+      font-family: var(--font-mono);
+      transition: border-color 0.2s, color 0.2s;
+      user-select: none;
+    }
+    details[open] .faq-icon {
+      border-color: var(--amber);
+      color: var(--amber);
+    }
+    .faq-plus { display: block; }
+    .faq-minus { display: none; }
+    details[open] .faq-plus { display: none; }
+    details[open] .faq-minus { display: block; }
+    .faq-answer {
+      font-size: 0.9375rem;
+      color: var(--text-2);
+      line-height: 1.7;
+      padding-bottom: var(--space-lg);
+      max-width: 64ch;
+    }
+    .faq-answer a {
+      color: var(--amber);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    /* ── Footer ─────────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: var(--space-xl) 0;
+    }
+    .footer-inner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+    }
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-3);
+      letter-spacing: 0.04em;
+    }
+    .footer-brand strong {
+      color: var(--text-2);
+      font-weight: 500;
+    }
+    .footer-sep { color: var(--border-light); }
+    .footer-links {
+      display: flex;
+      gap: var(--space-lg);
+    }
+    .footer-link {
+      font-family: var(--font-mono);
+      font-size: 0.6875rem;
+      color: var(--text-3);
+      letter-spacing: 0.04em;
+      transition: color 0.15s;
+      padding: 12px 0;
+      display: inline-block;
+    }
+    .footer-link:hover,
+    .footer-link:focus-visible {
+      color: var(--text-2);
+      outline: none;
+    }
+    .footer-link:focus-visible { text-decoration: underline; }
+
+    /* ── Responsive: tablet ─────────────────────────────────── */
+    @media (min-width: 640px) {
+      .features-list {
+        grid-template-columns: 1fr 1fr;
+      }
+      .feature-item {
+        border-right: 1px solid var(--border);
+        padding-right: var(--space-xl);
+      }
+      .feature-item:nth-child(2n) {
+        border-right: none;
+        padding-right: 0;
+        padding-left: var(--space-xl);
+      }
+      .feature-item:nth-child(-n+2) { border-top: 1px solid var(--border); }
+      .faq-grid {
+        grid-template-columns: 280px 1fr;
+        gap: var(--space-2xl);
+      }
+    }
+
+    /* ── Responsive: desktop ────────────────────────────────── */
+    @media (min-width: 900px) {
+      .hero-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-2xl);
+      }
+      .privacy-grid {
+        grid-template-columns: 1fr 1fr;
+        align-items: start;
+        gap: var(--space-2xl);
+      }
+    }
+
+    @media (max-width: 639px) {
+      .phones-row { gap: var(--space-md); }
+      .captura-phone { width: 150px; height: 300px; }
+      .captura-phone.featured { width: 170px; height: 340px; }
+      .phone { width: 180px; height: 360px; }
+      .phone-secondary { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <a href="#hero" class="skip-link">Saltar al contenido</a>
+
+  <!-- ── Nav ─────────────────────────────────────────────── -->
+  <header>
+    <nav class="container">
+      <a href="#" class="nav-logo" aria-label="OpoRecord, volver al inicio">
+        <span class="nav-logo-dot" aria-hidden="true"></span>
+        OpoRecord
+      </a>
+      <a href="#" class="nav-cta" aria-label="Descargar en Google Play">
+        Descargar
+      </a>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- ── Hero ────────────────────────────────────────────── -->
+    <section id="hero" aria-labelledby="hero-heading">
+      <div class="container">
+        <div class="hero-grid">
+
+          <div class="hero-content">
+            <div class="hero-eyebrow reveal">
+              <span class="hero-eyebrow-line" aria-hidden="true"></span>
+              Kairos Studio · v2.3.0
+            </div>
+            <h1 class="hero-title reveal reveal-delay-1" id="hero-heading">
+              Prepara tu<br>oposición<br><em>física.</em>
+            </h1>
+            <p class="hero-subtitle reveal reveal-delay-2">
+              Registra tus pruebas con los baremos oficiales del BOE, sigue el progreso semana a semana y exporta resultados en PDF. Sin cuenta. Sin servidor. Sin internet.
+            </p>
+            <div class="hero-actions reveal reveal-delay-3">
+              <a href="#" class="btn-primary" aria-label="Descargar OpoRecord en Google Play">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M3.18 23.74c.38.22.82.23 1.2.04L15.5 12 4.38.22C4 .03 3.56.04 3.18.26 2.44.69 2 1.52 2 2.5v19c0 .98.44 1.81 1.18 2.24z"/>
+                  <path d="M19.78 10.06l-2.86-1.65L13.69 12l3.23 3.59 2.86-1.65c.85-.49 1.22-1.3 1.22-1.94s-.37-1.45-1.22-1.94z"/>
+                  <path d="M4.38.22l12.54 13.97 2.86-1.65c.85-.49 1.22-1.3 1.22-1.94L4.38.22z" opacity=".6"/>
+                  <path d="M4.38 23.78l15.4-10.16-2.86-1.65L4.38 23.78z" opacity=".6"/>
+                </svg>
+                Descargar en Google Play
+              </a>
+              <div class="score-badge" role="img" aria-label="Valoración media: 8.94 sobre 10">
+                <span class="score-value">8.94 / 10</span>
+                <span class="score-label">Valoración media</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-visual reveal reveal-delay-2" aria-hidden="true">
+            <div class="phone-wrap">
+              <div class="phone phone-secondary">
+                <div class="phone-screen screen-chart">
+                  <div class="screen-label">Evolución</div>
+                  <div class="chart-bars">
+                    <div class="chart-bar" style="height:40%"></div>
+                    <div class="chart-bar" style="height:55%"></div>
+                    <div class="chart-bar" style="height:50%"></div>
+                    <div class="chart-bar" style="height:65%"></div>
+                    <div class="chart-bar" style="height:58%"></div>
+                    <div class="chart-bar" style="height:72%"></div>
+                    <div class="chart-bar current" style="height:80%"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="phone">
+                <div class="phone-screen">
+                  <div class="screen-label">Pruebas físicas</div>
+                  <div class="screen-score-row">
+                    <span class="screen-score-num">Aprobado</span>
+                  </div>
+                  <div class="bar-row">
+                    <span class="bar-name">Test Cooper</span>
+                    <div class="bar-track"><div class="bar-fill pass" style="width:82%"></div></div>
+                  </div>
+                  <div class="bar-row">
+                    <span class="bar-name">Flexiones</span>
+                    <div class="bar-track"><div class="bar-fill pass" style="width:91%"></div></div>
+                  </div>
+                  <div class="bar-row">
+                    <span class="bar-name">Abdominales</span>
+                    <div class="bar-track"><div class="bar-fill warn" style="width:67%"></div></div>
+                  </div>
+                  <div class="bar-row">
+                    <span class="bar-name">Carrera lanzada</span>
+                    <div class="bar-track"><div class="bar-fill pass" style="width:88%"></div></div>
+                  </div>
+                  <div class="bar-row">
+                    <span class="bar-name">Salto horizontal</span>
+                    <div class="bar-track"><div class="bar-fill fail" style="width:44%"></div></div>
+                  </div>
+                  <div class="bar-row">
+                    <span class="bar-name">Natación</span>
+                    <div class="bar-track"><div class="bar-fill warn" style="width:58%"></div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Features ─────────────────────────────────────────── -->
+    <section id="features" aria-labelledby="features-heading">
+      <div class="container">
+        <header class="features-header">
+          <div class="section-eyebrow reveal">Funcionalidades</div>
+          <h2 class="section-title reveal reveal-delay-1" id="features-heading">
+            Todo lo que necesitas para prepararte.
+          </h2>
+        </header>
+        <div class="features-list" role="list">
+
+          <div class="feature-item reveal" role="listitem">
+            <span class="feature-index" aria-hidden="true">01</span>
+            <div class="feature-body">
+              <h3 class="feature-title">Baremos oficiales del BOE</h3>
+              <p class="feature-desc">Registra cada prueba y comprueba al instante si superas los baremos oficiales para tu convocatoria. Actualizado con las publicaciones del Boletín Oficial del Estado.</p>
+              <span class="feature-tag">Baremos BOE</span>
+            </div>
+          </div>
+
+          <div class="feature-item reveal reveal-delay-1" role="listitem">
+            <span class="feature-index" aria-hidden="true">02</span>
+            <div class="feature-body">
+              <h3 class="feature-title">Tests de temario y psicotécnicos</h3>
+              <p class="feature-desc">Registra tus resultados en tests escritos y psicotécnicos. Sigue el porcentaje de aciertos por bloque temático e identifica dónde necesitas refuerzo.</p>
+            </div>
+          </div>
+
+          <div class="feature-item reveal reveal-delay-2" role="listitem">
+            <span class="feature-index" aria-hidden="true">03</span>
+            <div class="feature-body">
+              <h3 class="feature-title">Estadísticas y gráficas de progreso</h3>
+              <p class="feature-desc">Visualiza tu evolución con gráficas claras semana a semana. Identifica en qué pruebas estás mejorando y cuáles necesitan más trabajo antes del examen.</p>
+            </div>
+          </div>
+
+          <div class="feature-item reveal reveal-delay-3" role="listitem">
+            <span class="feature-index" aria-hidden="true">04</span>
+            <div class="feature-body">
+              <h3 class="feature-title">Exportación a PDF</h3>
+              <p class="feature-desc">Genera un informe completo de tu preparación en PDF. Compártelo con tu preparador o guárdalo como referencia antes de la prueba oficial.</p>
+            </div>
+          </div>
+
+          <div class="feature-item reveal" role="listitem">
+            <span class="feature-index" aria-hidden="true">05</span>
+            <div class="feature-body">
+              <h3 class="feature-title">Notificaciones de entrenamiento</h3>
+              <p class="feature-desc">Configura recordatorios para no saltarte ninguna sesión. La constancia marca la diferencia entre aprobar y quedarse fuera.</p>
+            </div>
+          </div>
+
+          <div class="feature-item reveal reveal-delay-1" role="listitem">
+            <span class="feature-index" aria-hidden="true">06</span>
+            <div class="feature-body">
+              <h3 class="feature-title">100% local</h3>
+              <p class="feature-desc">Ningún dato sale de tu móvil. Sin cuenta, sin login, sin servidor. La app funciona sin conexión a internet en cualquier lugar.</p>
+              <span class="feature-tag">Sin internet</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Por qué sin internet ─────────────────────────────── -->
+    <section id="privacidad" aria-labelledby="privacidad-heading">
+      <div class="container">
+        <div class="privacy-grid">
+
+          <div class="reveal">
+            <div class="section-eyebrow">Privacidad</div>
+            <h2 class="privacy-statement" id="privacidad-heading">
+              Sin internet no es<br>una limitación.<br>Es <em>una decisión.</em>
+            </h2>
+          </div>
+
+          <div class="privacy-body reveal reveal-delay-1">
+            <p>
+              La mayoría de apps de entrenamiento necesitan una cuenta, sincronizan tus datos con servidores externos y dependen de una conexión activa para funcionar. <strong>OpoRecord no.</strong>
+            </p>
+            <p>
+              Tus tiempos, tus marcas, tus resultados en el test de Cooper: todo queda en tu móvil. No hay base de datos donde aparecer. No hay empresa que custodie tus datos de preparación. No hay nada que pueda fallar porque no hay servidor.
+            </p>
+            <p>
+              Funciona en el monte, en el polideportivo, en el cuartel, en el metro. Siempre. Sin excusas.
+            </p>
+            <div class="privacy-pills" role="list" aria-label="Garantías de privacidad">
+              <span class="privacy-pill" role="listitem">Sin cuenta</span>
+              <span class="privacy-pill" role="listitem">Sin login</span>
+              <span class="privacy-pill" role="listitem">Sin servidores</span>
+              <span class="privacy-pill" role="listitem">Sin publicidad</span>
+              <span class="privacy-pill" role="listitem">Offline siempre</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Capturas ───────────────────────────────────────────── -->
+    <section id="capturas" aria-labelledby="capturas-heading">
+      <div class="container">
+        <header class="capturas-header">
+          <div class="section-eyebrow reveal">La app</div>
+          <h2 class="section-title reveal reveal-delay-1" id="capturas-heading">Diseñada para el opositor.</h2>
+        </header>
+
+        <div class="phones-row" aria-label="Capturas de pantalla de la aplicación" role="img">
+
+          <div class="captura-item reveal">
+            <div class="captura-phone" aria-hidden="true">
+              <div class="captura-inner">
+                <div class="captura-topbar">
+                  <span class="captura-topbar-title">Mis pruebas</span>
+                  <span class="captura-topbar-dot"></span>
+                </div>
+                <div class="test-list">
+                  <div class="test-row">
+                    <span class="test-row-name">Test Cooper</span>
+                    <span class="test-row-val">2.980 m</span>
+                    <span class="test-row-badge superado">✓</span>
+                  </div>
+                  <div class="test-row">
+                    <span class="test-row-name">Flexiones</span>
+                    <span class="test-row-val">34 reps</span>
+                    <span class="test-row-badge superado">✓</span>
+                  </div>
+                  <div class="test-row">
+                    <span class="test-row-name">Abdominales</span>
+                    <span class="test-row-val">28 reps</span>
+                    <span class="test-row-badge pendiente">!</span>
+                  </div>
+                  <div class="test-row">
+                    <span class="test-row-name">Salto horiz.</span>
+                    <span class="test-row-val">1,72 m</span>
+                    <span class="test-row-badge pendiente">!</span>
+                  </div>
+                  <div class="test-row">
+                    <span class="test-row-name">Natación</span>
+                    <span class="test-row-val">48 s</span>
+                    <span class="test-row-badge superado">✓</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <span class="captura-label">Registro de pruebas</span>
+          </div>
+
+          <div class="captura-item reveal reveal-delay-1">
+            <div class="captura-phone featured" aria-hidden="true">
+              <div class="captura-inner">
+                <div class="captura-topbar">
+                  <span class="captura-topbar-title">Evolución</span>
+                  <span class="captura-topbar-dot"></span>
+                </div>
+                <div class="evo-chart">
+                  <div class="evo-bars">
+                    <div class="evo-bar" style="height:38%"></div>
+                    <div class="evo-bar mid" style="height:50%"></div>
+                    <div class="evo-bar mid" style="height:45%"></div>
+                    <div class="evo-bar mid" style="height:62%"></div>
+                    <div class="evo-bar mid" style="height:55%"></div>
+                    <div class="evo-bar hi" style="height:78%"></div>
+                    <div class="evo-bar hi" style="height:82%"></div>
+                  </div>
+                  <div class="evo-labels">
+                    <span class="evo-label">S1</span>
+                    <span class="evo-label">S2</span>
+                    <span class="evo-label">S3</span>
+                    <span class="evo-label">S4</span>
+                    <span class="evo-label">S5</span>
+                    <span class="evo-label">S6</span>
+                    <span class="evo-label">S7</span>
+                  </div>
+                </div>
+                <div class="stat-grid" style="margin-top: 14px;">
+                  <div class="stat-card">
+                    <div class="stat-card-val amber">4/6</div>
+                    <div class="stat-card-label">Superados</div>
+                  </div>
+                  <div class="stat-card">
+                    <div class="stat-card-val">+12%</div>
+                    <div class="stat-card-label">Mejora</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <span class="captura-label">Gráficas de progreso</span>
+          </div>
+
+          <div class="captura-item reveal reveal-delay-2">
+            <div class="captura-phone" aria-hidden="true">
+              <div class="captura-inner">
+                <div class="captura-topbar">
+                  <span class="captura-topbar-title">Estadísticas</span>
+                  <span class="captura-topbar-dot"></span>
+                </div>
+                <div class="stat-grid">
+                  <div class="stat-card">
+                    <div class="stat-card-val amber">87</div>
+                    <div class="stat-card-label">Sesiones</div>
+                  </div>
+                  <div class="stat-card">
+                    <div class="stat-card-val">8.94</div>
+                    <div class="stat-card-label">Nota media</div>
+                  </div>
+                  <div class="stat-card">
+                    <div class="stat-card-val">14</div>
+                    <div class="stat-card-label">Días racha</div>
+                  </div>
+                  <div class="stat-card">
+                    <div class="stat-card-val amber">67%</div>
+                    <div class="stat-card-label">Temario</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <span class="captura-label">Estadísticas globales</span>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ── FAQ ──────────────────────────────────────────────── -->
+    <section id="faq" aria-labelledby="faq-heading">
+      <div class="container">
+        <div class="faq-grid">
+
+          <header class="faq-header">
+            <div class="section-eyebrow reveal">Preguntas</div>
+            <h2 class="section-title reveal reveal-delay-1" id="faq-heading">Lo que preguntan los opositores.</h2>
+          </header>
+
+          <div class="faq-list reveal reveal-delay-1">
+
+            <details>
+              <summary>
+                ¿Para qué oposiciones sirve OpoRecord?
+                <span class="faq-icon" aria-hidden="true">
+                  <span class="faq-plus">+</span>
+                  <span class="faq-minus">−</span>
+                </span>
+              </summary>
+              <p class="faq-answer">Para cualquier proceso selectivo que incluya pruebas físicas: Policía Nacional, Guardia Civil, Fuerzas Armadas, Bomberos, Policía Local, Cuerpo Nacional de Inteligencia y otras convocatorias autonómicas. Los baremos incluidos en la app están basados en publicaciones del BOE.</p>
+            </details>
+
+            <details>
+              <summary>
+                ¿Mis datos están seguros?
+                <span class="faq-icon" aria-hidden="true">
+                  <span class="faq-plus">+</span>
+                  <span class="faq-minus">−</span>
+                </span>
+              </summary>
+              <p class="faq-answer">Completamente. OpoRecord no tiene servidor, no tiene base de datos externa y no requiere ninguna cuenta. Todo lo que registras queda almacenado localmente en tu dispositivo. Nadie tiene acceso a tus datos, ni siquiera nosotros.</p>
+            </details>
+
+            <details>
+              <summary>
+                ¿Funciona sin conexión a internet?
+                <span class="faq-icon" aria-hidden="true">
+                  <span class="faq-plus">+</span>
+                  <span class="faq-minus">−</span>
+                </span>
+              </summary>
+              <p class="faq-answer">Sí, siempre. La app no necesita internet para ninguna funcionalidad. Puedes registrar pruebas, consultar estadísticas y exportar PDFs aunque estés en el monte, en el cuartel o en un sitio sin cobertura.</p>
+            </details>
+
+            <details>
+              <summary>
+                ¿La app es gratuita?
+                <span class="faq-icon" aria-hidden="true">
+                  <span class="faq-plus">+</span>
+                  <span class="faq-minus">−</span>
+                </span>
+              </summary>
+              <p class="faq-answer">Sí, OpoRecord es gratuita. Sin suscripciones, sin compras dentro de la app, sin publicidad. La descargas una vez y es tuya.</p>
+            </details>
+
+            <details>
+              <summary>
+                ¿Está disponible para iPhone?
+                <span class="faq-icon" aria-hidden="true">
+                  <span class="faq-plus">+</span>
+                  <span class="faq-minus">−</span>
+                </span>
+              </summary>
+              <p class="faq-answer">De momento OpoRecord está disponible únicamente para Android en Google Play. La versión para iOS está en los planes de Kairos Studio. Si te interesa, escríbenos a <a href="mailto:monster108lol@gmail.com">monster108lol@gmail.com</a> y lo tendremos en cuenta.</p>
+            </details>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ── Footer ───────────────────────────────────────────── -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          Hecho por&nbsp;<strong><a href="https://kairosstudiobyaritz.github.io" rel="noopener">Kairos Studio</a></strong>
+          <span class="footer-sep" aria-hidden="true">&middot;</span>
+          OpoRecord v2.3.0
+        </div>
+        <nav class="footer-links" aria-label="Pie de página">
+          <a href="mailto:monster108lol@gmail.com" class="footer-link">Contacto</a>
+          <a href="privacy.html" class="footer-link">Privacidad</a>
+          <a href="https://kairosstudiobyaritz.github.io" class="footer-link" rel="noopener">Kairos Studio</a>
+        </nav>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+      );
+
+      document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+
+      // Trigger hero elements immediately (they're above the fold)
+      document.querySelectorAll('#hero .reveal').forEach((el) => {
+        el.classList.add('visible');
+      });
+    })();
+  </script>
+
+</body>
+</html>
