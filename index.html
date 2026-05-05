@@ -116,11 +116,44 @@ nav.scrolled{
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;
   background-clip:text;
 }
-.hero h1 .line2{
-  display:block;font-style:italic;
+
+/* ─── ROTATING WORD ──────────────────────────────────── */
+.line2-wrap{
+  display:block;
+  position:relative;
+  left:50%;
+  transform:translateX(-50%);
+  width:100vw;
+  overflow:hidden;
+  height:1.55em;
+  margin-top:0.02em;
+}
+.rotating-word{
+  position:absolute;
+  left:0;right:0;
+  top:0.15em;           /* slight top offset so descenders don't clip at bottom */
+  text-align:center;
+  font-style:italic;
   background:linear-gradient(90deg,#fbbf24,#fb923c,#ef4444);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;
   background-clip:text;
+  opacity:0;
+  transform:translateY(130%);
+  transition:
+    opacity  0.55s cubic-bezier(0.34,1.56,0.64,1),
+    transform 0.7s cubic-bezier(0.34,1.56,0.64,1);
+  will-change:transform,opacity;
+}
+.rotating-word.active{
+  opacity:1;
+  transform:translateY(0);
+}
+.rotating-word.exit{
+  opacity:0;
+  transform:translateY(-130%);
+  transition:
+    opacity  0.32s ease-in,
+    transform 0.38s cubic-bezier(0.55,0,1,0.45);
 }
 .hero-sub{
   max-width:540px;font-size:1.05rem;
@@ -475,7 +508,14 @@ footer{
     <p class="hero-eyebrow">Estudio independiente · España</p>
     <h1>
       <span class="line1">Apps que</span>
-      <span class="line2">importan</span>
+      <span class="line2-wrap">
+        <span class="rotating-word active">importan</span>
+        <span class="rotating-word">evolucionan</span>
+        <span class="rotating-word">transforman</span>
+        <span class="rotating-word">desafían</span>
+        <span class="rotating-word">impulsan</span>
+        <span class="rotating-word">sorprenden</span>
+      </span>
     </h1>
     <p class="hero-sub">Construimos herramientas simples, honestas y bien hechas para personas reales. Sin ruido, sin relleno. Solo lo que necesitas.</p>
     <div class="hero-actions">
@@ -502,7 +542,6 @@ footer{
     <h2 class="section-title">Lo que hemos <em>construido</em></h2>
   </div>
 
-  <!-- Featured OpoRecord card with hero image -->
   <div class="featured-card reveal">
     <div class="featured-card-content">
       <span class="app-badge">
@@ -530,7 +569,6 @@ footer{
     </div>
   </div>
 
-  <!-- Coming soon card -->
   <div class="coming-soon-card reveal">
     <div>
       <div class="cs-badge">✦ &nbsp;Próximamente</div>
@@ -642,7 +680,6 @@ footer{
 (function(){
 "use strict";
 
-/* ── WebGL2 Cosmic Nebula Shader ────────────────────── */
 const canvas = document.getElementById('bg');
 const gl = canvas.getContext('webgl2');
 
@@ -742,7 +779,6 @@ const moveLoc = gl.getUniformLocation(prog,'move');
 const touchLoc= gl.getUniformLocation(prog,'touch');
 const pCntLoc = gl.getUniformLocation(prog,'pointerCount');
 
-/* Pointer state */
 let mouseMove=[0,0], mouseCoords=[0,0], pCount=0, active=false;
 
 const mapCoord = (x,y)=>[x*dpr, canvas.height - y*dpr];
@@ -752,11 +788,10 @@ canvas.addEventListener('pointermove', e=>{
   mouseCoords = mapCoord(e.clientX, e.clientY);
   mouseMove = [mouseMove[0]+e.movementX, mouseMove[1]+e.movementY];
 });
-canvas.addEventListener('pointerdown', e=>{ active=true; pCount++; });
+canvas.addEventListener('pointerdown', ()=>{ active=true; pCount++; });
 canvas.addEventListener('pointerup',   ()=>{ pCount=Math.max(0,pCount-1); if(!pCount) active=false; });
 canvas.addEventListener('pointerleave',()=>{ active=false; });
 
-/* Resize */
 let dpr = Math.max(1, 0.5*window.devicePixelRatio);
 function resize(){
   dpr = Math.max(1, 0.5*window.devicePixelRatio);
@@ -767,7 +802,6 @@ function resize(){
 window.addEventListener('resize', resize);
 resize();
 
-/* Render loop */
 const t0 = performance.now();
 function render(now){
   const t = (now - t0) * 1e-3;
@@ -787,19 +821,34 @@ function render(now){
 }
 requestAnimationFrame(render);
 
-/* ── Scroll: nav ───────────────────────────────────── */
 window.addEventListener('scroll',()=>{
   document.getElementById('nav')
     .classList.toggle('scrolled', window.scrollY > 60);
 });
 
-/* ── Scroll reveal ─────────────────────────────────── */
 const io = new IntersectionObserver(entries=>{
   entries.forEach(e=>{
     if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target); }
   });
 },{threshold:0.1});
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* ── Rotating word ─────────────────────────────────── */
+const words   = Array.from(document.querySelectorAll('.rotating-word'));
+let   current = 0;
+
+setInterval(() => {
+  const prev = current;
+  current = (current + 1) % words.length;
+
+  /* exit current */
+  words[prev].classList.remove('active');
+  words[prev].classList.add('exit');
+  setTimeout(() => words[prev].classList.remove('exit'), 450);
+
+  /* enter next */
+  words[current].classList.add('active');
+}, 2200);
 
 })();
 </script>
