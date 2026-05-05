@@ -276,7 +276,7 @@ nav.scrolled{
 }
 
 .coming-soon-card{
-  margin-top:1.5px;
+  margin-top:2.5rem;
   border:0.5px solid var(--glass-border);
   border-radius:10px;overflow:hidden;
   background:var(--card-bg);
@@ -339,21 +339,26 @@ nav.scrolled{
   border:0.5px solid var(--glass-border);border-radius:10px;overflow:hidden;
 }
 .about-stat{
-  padding:2rem;background:var(--card-bg);text-align:center;
+  padding:2.2rem 1.5rem;background:rgba(255,247,237,0.05);text-align:center;
   border-right:0.5px solid var(--glass-border);
   border-bottom:0.5px solid var(--glass-border);
+  transition:background 0.2s;
 }
+.about-stat:hover{background:rgba(245,158,11,0.07)}
 .about-stat:nth-child(2n){border-right:none}
 .about-stat:nth-child(n+3){border-bottom:none}
 .about-stat .num{
   font-family:'Cormorant Garamond',serif;
-  font-size:3rem;font-weight:300;color:var(--ink);
+  font-size:3.2rem;font-weight:300;
+  color:var(--accent-bright);
   display:block;line-height:1;
 }
 .about-stat .label{
-  font-family:'JetBrains Mono',monospace;
-  font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;
-  color:var(--ink-dim);margin-top:0.4rem;display:block;
+  font-family:'DM Sans',sans-serif;
+  font-size:0.8rem;font-weight:400;
+  letter-spacing:0.03em;text-transform:none;
+  color:var(--ink-muted);margin-top:0.6rem;display:block;
+  line-height:1.35;
 }
 
 .stack-row{
@@ -479,16 +484,12 @@ footer{
     </div>
     <div class="hero-stats">
       <div class="stat-item">
-        <span class="stat-num">8.94</span>
-        <span class="stat-label">Puntuación media</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-num">3</span>
-        <span class="stat-label">Pruebas registradas</span>
-      </div>
-      <div class="stat-item">
         <span class="stat-num">0</span>
         <span class="stat-label">Anuncios intrusivos</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">100%</span>
+        <span class="stat-label">Datos locales</span>
       </div>
     </div>
   </div>
