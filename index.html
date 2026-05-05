@@ -141,7 +141,7 @@
       align-items: center;
       padding: 100px 24px 60px;
       position: relative;
-      overflow: hidden;
+      overflow: clip; /* clips background decorations but not absolutely-positioned children */
     }
     .hero-bg {
       position: absolute; inset: 0;
@@ -222,20 +222,10 @@
     /* ── PHONE VISUAL ── */
     .hero-visual {
       display: none;
-      position: absolute;
-      right: 48px;
-      /* ✅ FIX: subimos el móvil en pantallas grandes con un top más alto */
-      top: 50%;
-      transform: translateY(-50%);
       width: 340px;
+      flex-shrink: 0;
+      align-self: center;
       animation: fadeUp 0.8s ease 0.2s both;
-    }
-    /* En pantallas muy anchas (>1600px) el mockup quedaba cortado abajo */
-    @media (min-width: 1600px) {
-      .hero-visual {
-        top: 44%;
-        transform: translateY(-50%);
-      }
     }
 
     .phone-mockup {
@@ -501,8 +491,12 @@
       nav { padding: 20px 48px; }
       .hamburger { display: none !important; }
       .nav-links { display: flex !important; gap: 32px; align-items: center; }
-      .hero { padding: 120px 48px 80px; }
-      .hero-visual { display: block; }
+      .hero {
+        padding: 120px 48px 80px;
+        justify-content: space-between;
+        gap: 48px;
+      }
+      .hero-visual { display: flex; justify-content: flex-end; }
       section { padding: 100px 48px; }
       .about-inner { grid-template-columns: 1fr 1fr; gap: 80px; }
       .apps-header { flex-direction: row; align-items: flex-end; }
