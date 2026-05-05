@@ -243,15 +243,36 @@ nav.scrolled{
   width:100%;height:100%;
   object-fit:cover;object-position:center;
   display:block;
-  transition:transform 0.6s ease;
+  transform-origin:60% 55%;
+  animation:kenburns 12s ease-in-out infinite alternate;
 }
-.featured-card:hover .featured-card-image img{
-  transform:scale(1.03);
+@keyframes kenburns{
+  0%  { transform:scale(1.0) translate(0px, 0px); }
+  30% { transform:scale(1.04) translate(-8px, -4px); }
+  60% { transform:scale(1.08) translate(-4px, 6px); }
+  100%{ transform:scale(1.05) translate(6px, -3px); }
 }
 .img-overlay{
   position:absolute;inset:0;
-  background:linear-gradient(90deg, rgba(7,6,10,0.35) 0%, rgba(7,6,10,0) 40%);
+  background:linear-gradient(90deg, rgba(7,6,10,0.4) 0%, rgba(7,6,10,0) 45%);
   pointer-events:none;
+}
+.img-warmlight{
+  position:absolute;inset:0;
+  pointer-events:none;
+  animation:warmpulse 4s ease-in-out infinite;
+}
+@keyframes warmpulse{
+  0%,100%{ background:radial-gradient(ellipse 70% 60% at 65% 40%, rgba(245,158,11,0.08) 0%, rgba(245,158,11,0) 70%); }
+  50%    { background:radial-gradient(ellipse 70% 60% at 65% 40%, rgba(251,191,36,0.15) 0%, rgba(245,158,11,0) 70%); }
+}
+.img-scanline{
+  position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(
+    0deg,
+    rgba(0,0,0,0) 0px, rgba(0,0,0,0) 2px,
+    rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px
+  );
 }
 
 .coming-soon-card{
@@ -498,11 +519,13 @@ footer{
     </div>
     <div class="featured-card-image">
       <img
-        src="ImageniPhone17NaranjaOpoRecord.png"
+        src="https://d8j0ntlcm91z4.cloudfront.net/user_3DJckNuMbXh5sETOXxMtpov7B2X/hf_20260505_184007_fed36022-2200-4550-8556-f3d2c2f057d1.png"
         alt="Mano sosteniendo un iPhone naranja con la app OpoRecord desbloqueada en pantalla"
         loading="lazy"
       />
       <div class="img-overlay"></div>
+      <div class="img-warmlight"></div>
+      <div class="img-scanline"></div>
     </div>
   </div>
 
