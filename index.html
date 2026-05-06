@@ -934,10 +934,210 @@
     .about-visual { order: -1; }
     #stats { padding: 60px 30px; }
   }
+  /* ── ORBITAL TIMELINE ── */
+  #orbital {
+    background: var(--bg2);
+    padding: 120px 60px;
+    position: relative;
+    overflow: hidden;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  #orbital .section-tag { justify-content: center; }
+  #orbital .section-headline { text-align: center; margin-left: auto; margin-right: auto; }
+  #orbital .section-sub { text-align: center; margin-left: auto; margin-right: auto; }
+
+  .orbital-stage {
+    position: relative;
+    width: 100%; height: 560px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: default;
+  }
+
+  /* Center orb */
+  .orbital-center {
+    position: absolute; z-index: 10;
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #E8C97A, #9A6E2E);
+    box-shadow: 0 0 40px rgba(200,169,110,0.5), 0 0 80px rgba(200,169,110,0.2);
+    display: flex; align-items: center; justify-content: center;
+    animation: orb-pulse 3s ease-in-out infinite;
+  }
+  .orbital-center::before {
+    content: '';
+    position: absolute;
+    width: 84px; height: 84px;
+    border-radius: 50%;
+    border: 1px solid rgba(200,169,110,0.3);
+    animation: orb-ring 2s ease-in-out infinite;
+  }
+  .orbital-center::after {
+    content: '';
+    position: absolute;
+    width: 106px; height: 106px;
+    border-radius: 50%;
+    border: 1px solid rgba(200,169,110,0.12);
+    animation: orb-ring 2s .5s ease-in-out infinite;
+  }
+  .orbital-center-inner {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: rgba(244,241,236,0.9);
+  }
+  @keyframes orb-pulse {
+    0%,100%{box-shadow:0 0 40px rgba(200,169,110,.5),0 0 80px rgba(200,169,110,.2);}
+    50%{box-shadow:0 0 60px rgba(200,169,110,.7),0 0 120px rgba(200,169,110,.3);}
+  }
+  @keyframes orb-ring {
+    0%,100%{transform:scale(1);opacity:.6;}
+    50%{transform:scale(1.08);opacity:1;}
+  }
+
+  /* Orbit ring */
+  .orbital-ring {
+    position: absolute;
+    width: 400px; height: 400px;
+    border-radius: 50%;
+    border: 1px solid rgba(200,169,110,0.12);
+  }
+
+  /* Nodes */
+  .orbital-node {
+    position: absolute;
+    cursor: pointer;
+    transition: transform .7s cubic-bezier(.16,1,.3,1), opacity .7s;
+    z-index: 20;
+  }
+  .orbital-node-btn {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 2px solid rgba(200,169,110,0.4);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+    transition: background .3s, border-color .3s, transform .3s, box-shadow .3s;
+    position: relative;
+  }
+  .orbital-node.active .orbital-node-btn {
+    background: var(--gold);
+    border-color: var(--gold);
+    transform: scale(1.4);
+    box-shadow: 0 0 24px rgba(200,169,110,.5);
+  }
+  .orbital-node.pulsing .orbital-node-btn {
+    border-color: var(--gold);
+    animation: node-pulse-border 1.2s ease-in-out infinite;
+  }
+  @keyframes node-pulse-border {
+    0%,100%{box-shadow:0 0 0 0 rgba(200,169,110,.5);}
+    50%{box-shadow:0 0 0 8px rgba(200,169,110,0);}
+  }
+  .orbital-node-label {
+    position: absolute;
+    top: 52px;
+    left: 50%; transform: translateX(-50%);
+    white-space: nowrap;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.65rem; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--white-dim);
+    transition: color .3s;
+  }
+  .orbital-node.active .orbital-node-label { color: var(--gold); }
+
+  /* Popup card */
+  .orbital-card {
+    position: absolute;
+    top: 68px; left: 50%; transform: translateX(-50%);
+    width: 220px;
+    background: rgba(14,15,18,0.96);
+    border: 1px solid var(--border);
+    padding: 0;
+    z-index: 200;
+    opacity: 0; pointer-events: none;
+    transform: translateX(-50%) translateY(6px);
+    transition: opacity .3s, transform .3s;
+    backdrop-filter: blur(16px);
+  }
+  .orbital-card::before {
+    content: '';
+    position: absolute; top: -1px; left: 20px; right: 20px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold), transparent);
+  }
+  .orbital-card::after {
+    content: '';
+    position: absolute;
+    top: -6px; left: 50%; transform: translateX(-50%);
+    width: 1px; height: 6px;
+    background: rgba(200,169,110,0.5);
+  }
+  .orbital-node.active .orbital-card {
+    opacity: 1; pointer-events: all;
+    transform: translateX(-50%) translateY(0);
+  }
+  .orbital-card-head {
+    padding: 14px 16px 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .orbital-card-status {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.6rem; font-weight: 700;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    padding: 3px 8px; border-radius: 1px;
+  }
+  .status-completed { background: var(--gold); color: var(--bg); }
+  .status-progress  { background: transparent; border: 1px solid var(--gold); color: var(--gold); }
+  .orbital-card-date {
+    font-family: 'DM Sans', sans-serif; font-size: 0.65rem;
+    color: var(--white-dim); font-style: italic;
+  }
+  .orbital-card-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem; font-weight: 300;
+    color: var(--white); padding: 10px 16px 4px;
+  }
+  .orbital-card-body {
+    font-size: 0.78rem; color: var(--white-dim);
+    line-height: 1.7; padding: 0 16px 14px;
+  }
+  .orbital-card-energy {
+    padding: 10px 16px 14px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+  .orbital-card-energy-row {
+    display: flex; justify-content: space-between;
+    font-size: 0.65rem; color: var(--white-dim);
+    margin-bottom: 6px; letter-spacing: 0.05em;
+  }
+  .orbital-card-energy-row span:last-child { color: var(--gold); font-family: 'Syne', sans-serif; font-weight: 600; }
+  .orbital-bar {
+    height: 2px; background: rgba(255,255,255,0.07); border-radius: 1px; overflow: hidden;
+  }
+  .orbital-bar-fill {
+    height: 100%;
+    background: linear-gradient(to right, var(--gold-dim), var(--gold));
+    border-radius: 1px;
+  }
+
+  /* hint text */
+  .orbital-hint {
+    text-align: center; margin-top: 32px;
+    font-size: 0.72rem; letter-spacing: 0.1em;
+    color: var(--white-dim); opacity: .5;
+    text-transform: uppercase;
+  }
+
   @media (max-width: 600px) {
     .philosophy-grid { grid-template-columns: 1fr; }
     .stats-grid { grid-template-columns: 1fr 1fr; }
     .nav-links { display: none; }
+    .hero-stats { display: none; }
+    .hero-scroll { display: none; }
+    .hero-actions { flex-direction: column; align-items: center; width: 100%; }
+    .btn-primary { width: 100%; text-align: center; }
+    #hero { padding: 0 24px 60px; min-height: 100svh; }
   }
 </style>
 </head>
@@ -977,7 +1177,7 @@
   <div class="orb orb-1"></div>
   <div class="orb orb-2"></div>
 
-  <div class="hero-tag">Estudio independiente · España · 2026</div>
+  <div class="hero-tag">Estudio independiente · España · 2024</div>
 
   <h1 class="hero-headline">
     <div class="line"><span>Apps que</span></div>
@@ -1113,6 +1313,22 @@
       <div class="phil-desc">Sin suscripciones agresivas. Modelo honesto: gratis donde importa, premium donde aporta valor real.</div>
     </div>
   </div>
+</section>
+
+<!-- ORBITAL TIMELINE -->
+<section id="orbital">
+  <div class="section-tag">Nuestros principios</div>
+  <h2 class="section-headline">El universo <em>Kairos</em></h2>
+  <p class="section-sub">Haz clic en cada nodo para explorar los principios que mueven cada decisión.</p>
+
+  <div class="orbital-stage" id="orbitalStage">
+    <div class="orbital-ring"></div>
+    <div class="orbital-center">
+      <div class="orbital-center-inner"></div>
+    </div>
+    <!-- nodes injected by JS -->
+  </div>
+  <p class="orbital-hint">Toca cualquier nodo · Haz clic en el fondo para reiniciar</p>
 </section>
 
 <!-- ABOUT -->
@@ -1298,6 +1514,135 @@
   document.querySelectorAll('a[href^="#"]').forEach(a => {
     a.addEventListener('click', e => {
       const target = document.querySelector(a.getAttribute('href'));
+      if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth' }); }
+    });
+  });
+
+  // ── ORBITAL TIMELINE
+  (function() {
+    const stage = document.getElementById('orbitalStage');
+    if (!stage) return;
+
+    const NODES = [
+      { id:1, icon:'🎯', label:'Enfocado',       title:'Enfocado',          status:'completed', energy:100, date:'Principio 01',
+        desc:'Una app hace una cosa bien. Sin funciones innecesarias que diluyan la experiencia.', related:[2,4] },
+      { id:2, icon:'🔒', label:'Privacidad',      title:'Privacidad primero',status:'completed', energy:95,  date:'Principio 02',
+        desc:'Tus datos son tuyos. Sin rastreo, sin venta de información, sin compromisos ocultos.', related:[1,3] },
+      { id:3, icon:'⚡', label:'Velocidad',        title:'Rápido y ligero',   status:'completed', energy:88,  date:'Principio 03',
+        desc:'Funciona bien incluso en dispositivos modestos. El rendimiento no es opcional.', related:[2,4] },
+      { id:4, icon:'🤝', label:'Accesible',        title:'Accesible',         status:'completed', energy:92,  date:'Principio 04',
+        desc:'Sin suscripciones agresivas. Gratis donde importa, premium donde aporta valor real.', related:[1,3] },
+      { id:5, icon:'✦',  label:'Calidad',          title:'Calidad ante todo', status:'in-progress', energy:78, date:'Principio 05',
+        desc:'Cada línea de código y cada pixel tienen intención. Lo mediocre no se lanza.', related:[1,6] },
+      { id:6, icon:'🚀', label:'Innovación',       title:'Siempre avanzando', status:'in-progress', energy:65, date:'Principio 06',
+        desc:'El catálogo crece. Cada nueva app nace de una necesidad real observada en personas reales.', related:[5] },
+    ];
+
+    const RADIUS   = window.innerWidth < 600 ? 150 : 200;
+    let   angle    = 0;
+    let   rafId    = null;
+    let   spinning = true;
+    let   activeId = null;
+
+    // Build node elements
+    const nodeEls = {};
+    NODES.forEach((n, idx) => {
+      const el = document.createElement('div');
+      el.className = 'orbital-node';
+      el.innerHTML = `
+        <div class="orbital-node-btn">${n.icon}</div>
+        <div class="orbital-node-label">${n.label}</div>
+        <div class="orbital-card">
+          <div class="orbital-card-head">
+            <span class="orbital-card-status ${n.status==='completed'?'status-completed':'status-progress'}">
+              ${n.status==='completed'?'Activo':'En evolución'}
+            </span>
+            <span class="orbital-card-date">${n.date}</span>
+          </div>
+          <div class="orbital-card-title">${n.title}</div>
+          <div class="orbital-card-body">${n.desc}</div>
+          <div class="orbital-card-energy">
+            <div class="orbital-card-energy-row">
+              <span>Nivel de adopción</span>
+              <span>${n.energy}%</span>
+            </div>
+            <div class="orbital-bar"><div class="orbital-bar-fill" style="width:${n.energy}%"></div></div>
+          </div>
+        </div>`;
+
+      el.addEventListener('click', e => {
+        e.stopPropagation();
+        activate(n.id);
+      });
+
+      stage.appendChild(el);
+      nodeEls[n.id] = el;
+    });
+
+    // Click background → reset
+    stage.addEventListener('click', () => {
+      if (activeId !== null) deactivate();
+    });
+
+    function activate(id) {
+      if (activeId === id) { deactivate(); return; }
+      deactivate();
+      activeId  = id;
+      spinning  = false;
+      cancelAnimationFrame(rafId);
+
+      nodeEls[id].classList.add('active');
+
+      // pulse related
+      const related = NODES.find(n=>n.id===id).related;
+      related.forEach(rid => nodeEls[rid] && nodeEls[rid].classList.add('pulsing'));
+
+      // snap this node to 270° (top)
+      const idx = NODES.findIndex(n=>n.id===id);
+      const targetAngle = 270 - (idx / NODES.length) * 360;
+      angle = targetAngle;
+      positionAll();
+    }
+
+    function deactivate() {
+      if (activeId === null) return;
+      nodeEls[activeId] && nodeEls[activeId].classList.remove('active');
+      NODES.forEach(n => nodeEls[n.id] && nodeEls[n.id].classList.remove('pulsing'));
+      activeId = null;
+      spinning = true;
+      loop();
+    }
+
+    function positionAll() {
+      const total = NODES.length;
+      NODES.forEach((n, idx) => {
+        const rad     = ((idx / total) * 360 + angle) * Math.PI / 180;
+        const x       = RADIUS * Math.cos(rad);
+        const y       = RADIUS * Math.sin(rad);
+        const opacity = Math.max(0.35, 0.35 + 0.65 * ((1 + Math.sin(rad)) / 2));
+        const zIdx    = Math.round(50 + 40 * Math.cos(rad));
+        const el      = nodeEls[n.id];
+        el.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
+        el.style.opacity   = activeId === n.id ? 1 : opacity;
+        el.style.zIndex    = activeId === n.id ? 200 : zIdx;
+      });
+    }
+
+    function loop() {
+      if (!spinning) return;
+      angle = (angle + 0.25) % 360;
+      positionAll();
+      rafId = requestAnimationFrame(loop);
+    }
+
+    positionAll();
+    loop();
+  })();
+
+  // ── SMOOTH SCROLL
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
       if (target) {
         e.preventDefault();
         target.scrollIntoView({ behavior: 'smooth' });
@@ -1312,15 +1657,12 @@
     const words = ['importan.','desafían.','impulsan.','sorprenden.','evolucionan.','transforman.'];
     let idx = 0;
     setInterval(() => {
-      // fade out
       el.classList.add('fade-out');
       setTimeout(() => {
-        // swap word, prepare fade-in position
         idx = (idx + 1) % words.length;
         el.textContent = words[idx];
         el.classList.remove('fade-out');
         el.classList.add('fade-in');
-        // force reflow then animate in
         el.getBoundingClientRect();
         el.classList.remove('fade-in');
       }, 320);
