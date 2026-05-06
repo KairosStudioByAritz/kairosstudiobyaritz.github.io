@@ -4,853 +4,1369 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kairos Studio — Apps que importan</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
+  :root {
+    --bg: #07080A;
+    --bg2: #0E0F12;
+    --gold: #C8A96E;
+    --gold-dim: #8A6E3E;
+    --white: #F4F1EC;
+    --white-dim: #9A968F;
+    --border: rgba(200,169,110,0.15);
+    --glow: rgba(200,169,110,0.08);
+  }
 
-:root{
-  --ink:#fff7ed;
-  --ink-muted:#c9a87c;
-  --ink-dim:#6b4f35;
-  --accent:#f59e0b;
-  --accent-bright:#fcd34d;
-  --accent-soft:#fdba74;
-  --glass-border:rgba(245,158,11,0.15);
-  --card-bg:rgba(255,247,237,0.03);
-  --dark:#07060a;
-  --surface:#0e0b06;
-}
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
-html{scroll-behavior:smooth}
-body{
-  background:var(--dark);
-  color:var(--ink);
-  font-family:'DM Sans',sans-serif;
-  font-weight:300;
-  overflow-x:hidden;
-  line-height:1.7;
-}
+  html { scroll-behavior: smooth; }
 
-/* ─── HERO / SHADER ─────────────────────────────────── */
-.hero-section{
-  position:relative;
-  width:100%;
-  height:100vh;
-  overflow:hidden;
-  background:#07060a;
-}
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.6;
+    cursor: none;
+    overflow-x: hidden;
+  }
 
-canvas#bg{
-  position:absolute;
-  top:0;left:0;
-  width:100%;height:100%;
-  display:block;
-  touch-action:none;
-}
+  /* ── CURSOR ── */
+  #cursor {
+    position: fixed;
+    width: 10px; height: 10px;
+    background: var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%,-50%);
+    transition: transform 0.1s, width 0.3s, height 0.3s, opacity 0.3s;
+    mix-blend-mode: difference;
+  }
+  #cursor-ring {
+    position: fixed;
+    width: 36px; height: 36px;
+    border: 1px solid rgba(200,169,110,0.5);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%,-50%);
+    transition: transform 0.18s ease, width 0.3s, height 0.3s, border-color 0.3s;
+  }
+  body:has(a:hover) #cursor-ring,
+  body:has(button:hover) #cursor-ring {
+    width: 56px; height: 56px;
+    border-color: var(--gold);
+  }
 
-.hero-vignette{
-  position:absolute;
-  inset:0;
-  background:
-    radial-gradient(ellipse 80% 60% at 50% 45%, rgba(7,6,10,0) 0%, rgba(7,6,10,0.35) 60%, rgba(7,6,10,0.85) 100%),
-    linear-gradient(180deg, rgba(7,6,10,0) 0%, rgba(7,6,10,0) 50%, rgba(7,6,10,0.98) 100%);
-  pointer-events:none;
-}
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity: 0.35;
+    pointer-events: none;
+    z-index: 9990;
+  }
 
-/* ─── NAV ────────────────────────────────────────────── */
-nav{
-  position:fixed;top:0;width:100%;z-index:100;
-  padding:1.5rem 3rem;
-  display:flex;align-items:center;justify-content:space-between;
-  transition:background 0.4s, backdrop-filter 0.4s;
-}
-nav.scrolled{
-  background:rgba(7,6,10,0.82);
-  backdrop-filter:blur(18px);
-  border-bottom:0.5px solid var(--glass-border);
-}
-.nav-logo{
-  font-family:'Cormorant Garamond',serif;
-  font-size:1.4rem;font-weight:400;
-  letter-spacing:0.08em;color:var(--ink);text-decoration:none;
-}
-.nav-logo span{color:var(--accent)}
-.nav-links{display:flex;align-items:center;gap:2.5rem}
-.nav-links a{
-  font-size:0.8rem;letter-spacing:0.13em;text-transform:uppercase;
-  color:var(--ink-muted);text-decoration:none;transition:color 0.2s;
-}
-.nav-links a:hover{color:var(--ink)}
-.nav-cta{
-  padding:0.5rem 1.2rem;
-  border:0.5px solid var(--glass-border);border-radius:3px;
-  background:rgba(245,158,11,0.08);
-  color:var(--accent-bright) !important;
-  transition:background 0.2s,border-color 0.2s !important;
-}
-.nav-cta:hover{background:rgba(245,158,11,0.16)!important;border-color:rgba(245,158,11,0.35)!important}
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 28px 60px;
+    transition: background 0.4s, backdrop-filter 0.4s, padding 0.4s;
+  }
+  nav.scrolled {
+    background: rgba(7,8,10,0.85);
+    backdrop-filter: blur(20px);
+    padding: 18px 60px;
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    letter-spacing: 0.08em;
+    color: var(--white);
+    text-decoration: none;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .nav-logo-dot {
+    width: 7px; height: 7px;
+    background: var(--gold);
+    border-radius: 50%;
+    animation: pulse-dot 2.5s ease-in-out infinite;
+  }
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.6); }
+  }
+  .nav-links {
+    display: flex; align-items: center; gap: 40px;
+    list-style: none;
+  }
+  .nav-links a {
+    color: var(--white-dim);
+    text-decoration: none;
+    font-size: 0.85rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition: color 0.3s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    left: 0; bottom: -3px;
+    width: 0; height: 1px;
+    background: var(--gold);
+    transition: width 0.3s;
+  }
+  .nav-links a:hover { color: var(--white); }
+  .nav-links a:hover::after { width: 100%; }
+  .nav-cta {
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold) !important;
+    padding: 9px 22px;
+    border-radius: 2px;
+    font-size: 0.8rem !important;
+    letter-spacing: 0.1em !important;
+    transition: background 0.3s, color 0.3s !important;
+  }
+  .nav-cta:hover { background: var(--gold) !important; color: var(--bg) !important; }
+  .nav-cta::after { display: none !important; }
 
-/* ─── HERO CONTENT ───────────────────────────────────── */
-.hero-content{
-  position:absolute;inset:0;z-index:10;
-  display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  text-align:center;padding:8rem 2rem 4rem;
-}
-.hero-eyebrow{
-  font-family:'JetBrains Mono',monospace;
-  font-size:0.72rem;letter-spacing:0.22em;text-transform:uppercase;
-  color:var(--accent);margin-bottom:2rem;
-  opacity:0;animation:fadeUp 0.8s 0.2s forwards;
-}
-.hero h1{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(3.8rem,9vw,8.5rem);
-  font-weight:300;line-height:1.03;letter-spacing:-0.01em;
-  margin-bottom:1.8rem;
-  opacity:0;animation:fadeUp 0.9s 0.35s forwards;
-}
-.hero h1 .line1{
-  display:block;
-  background:linear-gradient(90deg,#fdba74,#fcd34d,#f59e0b);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  background-clip:text;
-}
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: flex-start;
+    padding: 0 60px;
+    position: relative;
+    overflow: hidden;
+  }
 
-/* ─── ROTATING WORD ──────────────────────────────────── */
-.line2-wrap{
-  display:block;
-  position:relative;
-  left:50%;
-  transform:translateX(-50%);
-  width:100vw;
-  overflow:hidden;
-  height:1.55em;
-  margin-top:0.02em;
-}
-.rotating-word{
-  position:absolute;
-  left:0;right:0;
-  top:0.15em;           /* slight top offset so descenders don't clip at bottom */
-  text-align:center;
-  font-style:italic;
-  background:linear-gradient(90deg,#fbbf24,#fb923c,#ef4444);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  background-clip:text;
-  opacity:0;
-  transform:translateY(130%);
-  transition:
-    opacity  0.55s cubic-bezier(0.34,1.56,0.64,1),
-    transform 0.7s cubic-bezier(0.34,1.56,0.64,1);
-  will-change:transform,opacity;
-}
-.rotating-word.active{
-  opacity:1;
-  transform:translateY(0);
-}
-.rotating-word.exit{
-  opacity:0;
-  transform:translateY(-130%);
-  transition:
-    opacity  0.32s ease-in,
-    transform 0.38s cubic-bezier(0.55,0,1,0.45);
-}
-.hero-sub{
-  max-width:540px;font-size:1.05rem;
-  color:rgba(255,247,237,0.7);font-weight:300;
-  margin-bottom:3rem;line-height:1.75;
-  opacity:0;animation:fadeUp 0.9s 0.55s forwards;
-}
-.hero-actions{
-  display:flex;gap:1rem;align-items:center;
-  opacity:0;animation:fadeUp 0.9s 0.75s forwards;
-}
-.btn-primary{
-  padding:0.9rem 2.2rem;
-  background:linear-gradient(90deg,#f59e0b,#fbbf24);
-  color:#07060a;border:none;border-radius:3px;
-  font-family:'DM Sans',sans-serif;font-size:0.88rem;
-  font-weight:500;letter-spacing:0.04em;
-  cursor:pointer;text-decoration:none;
-  transition:filter 0.2s,transform 0.15s;
-}
-.btn-primary:hover{filter:brightness(1.12);transform:translateY(-1px)}
-.btn-ghost{
-  padding:0.9rem 2rem;
-  border:0.5px solid var(--glass-border);
-  color:var(--ink-muted);border-radius:3px;
-  font-family:'DM Sans',sans-serif;font-size:0.88rem;
-  font-weight:300;letter-spacing:0.04em;
-  cursor:pointer;text-decoration:none;
-  transition:color 0.2s,border-color 0.2s;
-}
-.btn-ghost:hover{color:var(--ink);border-color:rgba(245,158,11,0.3)}
+  /* gradient mesh background */
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 70% 30%, rgba(200,169,110,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 40% at 10% 80%, rgba(200,169,110,0.04) 0%, transparent 50%),
+      radial-gradient(ellipse 100% 80% at 50% 100%, rgba(14,15,18,1) 0%, transparent 60%);
+  }
 
-.hero-stats{
-  position:absolute;bottom:3rem;
-  display:flex;gap:4rem;
-  opacity:0;animation:fadeUp 0.9s 1s forwards;
-}
-.stat-item{text-align:center}
-.stat-num{
-  font-family:'Cormorant Garamond',serif;
-  font-size:2.2rem;font-weight:600;
-  color:var(--ink);display:block;
-}
-.stat-label{
-  font-size:0.7rem;letter-spacing:0.14em;
-  text-transform:uppercase;color:var(--ink-dim);
-}
+  /* animated grid lines */
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(200,169,110,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(200,169,110,0.04) 1px, transparent 1px);
+    background-size: 80px 80px;
+    mask-image: radial-gradient(ellipse 80% 80% at 60% 40%, black 0%, transparent 70%);
+    animation: grid-shift 20s linear infinite;
+  }
+  @keyframes grid-shift {
+    0% { background-position: 0 0; }
+    100% { background-position: 80px 80px; }
+  }
 
-/* ─── SECTIONS ───────────────────────────────────────── */
-.section-wrap{
-  background:var(--dark);padding:7rem 3rem;
-}
-.section-wrap.alt{background:#0b0905}
+  /* floating orbs */
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    animation: orb-float 12s ease-in-out infinite;
+  }
+  .orb-1 {
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(200,169,110,0.12) 0%, transparent 70%);
+    top: -100px; right: -100px;
+    animation-delay: 0s;
+  }
+  .orb-2 {
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(200,169,110,0.06) 0%, transparent 70%);
+    bottom: 100px; left: 30%;
+    animation-delay: -6s;
+  }
+  @keyframes orb-float {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(30px, -20px) scale(1.05); }
+    66% { transform: translate(-20px, 30px) scale(0.95); }
+  }
 
-.section-tag{
-  font-family:'JetBrains Mono',monospace;
-  font-size:0.67rem;letter-spacing:0.2em;text-transform:uppercase;
-  color:var(--accent);margin-bottom:1rem;display:block;
-}
-.section-title{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(2.2rem,4vw,3.4rem);
-  font-weight:300;line-height:1.15;margin-bottom:1rem;
-}
-.section-title em{font-style:italic;color:var(--accent-soft)}
+  .hero-tag {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fade-up 0.8s 0.3s forwards;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .hero-tag::before {
+    content: '';
+    display: inline-block;
+    width: 40px; height: 1px;
+    background: var(--gold);
+  }
 
-/* ─── APPS ───────────────────────────────────────────── */
-.featured-card{
-  margin-top:3.5rem;
-  border:0.5px solid var(--glass-border);
-  border-radius:10px;overflow:hidden;
-  display:grid;grid-template-columns:1fr 1fr;
-  background:var(--card-bg);
-  transition:border-color 0.3s;
-}
-.featured-card:hover{border-color:rgba(245,158,11,0.28)}
+  .hero-headline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(4rem, 10vw, 9rem);
+    font-weight: 300;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    max-width: 800px;
+    margin-bottom: 32px;
+  }
+  .hero-headline .line {
+    display: block;
+    overflow: hidden;
+  }
+  .hero-headline .line span {
+    display: block;
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  .hero-headline .line:nth-child(1) span { animation: line-up 0.9s 0.5s cubic-bezier(0.16,1,0.3,1) forwards; }
+  .hero-headline .line:nth-child(2) span { animation: line-up 0.9s 0.7s cubic-bezier(0.16,1,0.3,1) forwards; }
+  .hero-headline .line:nth-child(3) span { animation: line-up 0.9s 0.9s cubic-bezier(0.16,1,0.3,1) forwards; }
+  .hero-headline em { font-style: italic; color: var(--gold); }
 
-.featured-card-content{
-  padding:3rem;
-  display:flex;flex-direction:column;justify-content:center;
-}
-.app-badge{
-  display:inline-flex;align-items:center;gap:0.45rem;
-  font-family:'JetBrains Mono',monospace;
-  font-size:0.64rem;letter-spacing:0.14em;text-transform:uppercase;
-  padding:0.3rem 0.75rem;border-radius:2px;
-  background:rgba(74,222,128,0.08);
-  color:#4ade80;border:0.5px solid rgba(74,222,128,0.2);
-  width:fit-content;margin-bottom:1.8rem;
-}
-.app-icon{font-size:2.4rem;margin-bottom:1.2rem;display:block}
-.featured-card-content h3{
-  font-family:'Cormorant Garamond',serif;
-  font-size:2.8rem;font-weight:400;line-height:1;
-  margin-bottom:0.6rem;
-}
-.featured-card-content p{
-  font-size:0.92rem;color:var(--ink-muted);
-  line-height:1.75;margin-bottom:2rem;max-width:380px;
-}
-.app-links{display:flex;gap:1.2rem;flex-wrap:wrap;margin-bottom:1.5rem}
-.app-link{
-  font-size:0.8rem;letter-spacing:0.06em;
-  color:var(--ink-muted);text-decoration:none;
-  border-bottom:0.5px solid var(--ink-dim);
-  padding-bottom:0.1rem;transition:color 0.2s,border-color 0.2s;
-}
-.app-link:hover{color:var(--accent-bright);border-color:var(--accent)}
-.platform-tag{
-  font-family:'JetBrains Mono',monospace;
-  font-size:0.62rem;letter-spacing:0.1em;
-  color:var(--ink-dim);
-}
+  @keyframes line-up {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fade-up {
+    to { opacity: 1; transform: translateY(0); }
+  }
 
-.featured-card-image{
-  position:relative;overflow:hidden;
-  min-height:460px;
-}
-.featured-card-image img{
-  width:100%;height:100%;
-  object-fit:cover;object-position:center;
-  display:block;
-  transform-origin:60% 55%;
-  animation:kenburns 12s ease-in-out infinite alternate;
-}
-@keyframes kenburns{
-  0%  { transform:scale(1.0) translate(0px, 0px); }
-  30% { transform:scale(1.04) translate(-8px, -4px); }
-  60% { transform:scale(1.08) translate(-4px, 6px); }
-  100%{ transform:scale(1.05) translate(6px, -3px); }
-}
-.img-overlay{
-  position:absolute;inset:0;
-  background:linear-gradient(90deg, rgba(7,6,10,0.4) 0%, rgba(7,6,10,0) 45%);
-  pointer-events:none;
-}
-.img-warmlight{
-  position:absolute;inset:0;
-  pointer-events:none;
-  animation:warmpulse 4s ease-in-out infinite;
-}
-@keyframes warmpulse{
-  0%,100%{ background:radial-gradient(ellipse 70% 60% at 65% 40%, rgba(245,158,11,0.08) 0%, rgba(245,158,11,0) 70%); }
-  50%    { background:radial-gradient(ellipse 70% 60% at 65% 40%, rgba(251,191,36,0.15) 0%, rgba(245,158,11,0) 70%); }
-}
-.img-scanline{
-  position:absolute;inset:0;pointer-events:none;
-  background:repeating-linear-gradient(
-    0deg,
-    rgba(0,0,0,0) 0px, rgba(0,0,0,0) 2px,
-    rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px
-  );
-}
+  .hero-sub {
+    font-size: 1rem;
+    color: var(--white-dim);
+    max-width: 460px;
+    line-height: 1.8;
+    margin-bottom: 48px;
+    opacity: 0;
+    animation: fade-up 0.8s 1.1s forwards;
+  }
 
-.coming-soon-card{
-  margin-top:2.5rem;
-  border:0.5px solid var(--glass-border);
-  border-radius:10px;overflow:hidden;
-  background:var(--card-bg);
-  padding:2.5rem;
-  display:flex;align-items:center;gap:2rem;
-}
-.cs-badge{
-  font-family:'JetBrains Mono',monospace;
-  font-size:0.64rem;letter-spacing:0.14em;text-transform:uppercase;
-  padding:0.3rem 0.75rem;border-radius:2px;
-  background:rgba(245,158,11,0.08);
-  color:var(--accent);border:0.5px solid var(--glass-border);
-  width:fit-content;margin-bottom:0.8rem;
-}
-.coming-soon-card h3{
-  font-family:'Cormorant Garamond',serif;
-  font-size:1.6rem;font-weight:400;color:var(--ink-muted);
-}
-.coming-soon-card p{
-  font-size:0.85rem;color:var(--ink-dim);margin-top:0.3rem;
-}
+  .hero-actions {
+    display: flex; gap: 20px; align-items: center;
+    opacity: 0;
+    animation: fade-up 0.8s 1.3s forwards;
+  }
 
-/* ─── PRINCIPLES ─────────────────────────────────────── */
-.principles-grid{
-  display:grid;grid-template-columns:repeat(4,1fr);
-  gap:0;margin-top:3.5rem;
-  border:0.5px solid var(--glass-border);border-radius:10px;overflow:hidden;
-}
-.principle{
-  padding:2.5rem 2rem;background:var(--card-bg);
-  border-right:0.5px solid var(--glass-border);
-  transition:background 0.2s;
-}
-.principle:last-child{border-right:none}
-.principle:hover{background:rgba(245,158,11,0.04)}
-.principle-icon{
-  width:36px;height:36px;border-radius:50%;
-  border:0.5px solid var(--glass-border);
-  display:flex;align-items:center;justify-content:center;
-  font-size:1rem;margin-bottom:1.5rem;
-  background:rgba(245,158,11,0.07);
-}
-.principle h4{
-  font-family:'Cormorant Garamond',serif;
-  font-size:1.3rem;font-weight:400;margin-bottom:0.6rem;
-}
-.principle p{font-size:0.84rem;color:var(--ink-muted);line-height:1.7}
+  .btn-primary {
+    background: var(--gold);
+    color: var(--bg);
+    padding: 14px 32px;
+    border-radius: 2px;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: transform 0.3s, box-shadow 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: rgba(255,255,255,0.15);
+    transition: left 0.4s;
+  }
+  .btn-primary:hover::before { left: 100%; }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 20px 40px rgba(200,169,110,0.25); }
 
-/* ─── ABOUT ──────────────────────────────────────────── */
-.about-layout{
-  display:grid;grid-template-columns:1fr 1fr;
-  gap:5rem;align-items:start;margin-top:3rem;
-}
-.about-copy p{
-  font-size:1rem;color:var(--ink-muted);
-  line-height:1.8;margin-bottom:1.2rem;
-}
-.about-stats{
-  display:grid;grid-template-columns:1fr 1fr;gap:0;
-  border:0.5px solid var(--glass-border);border-radius:10px;overflow:hidden;
-}
-.about-stat{
-  padding:2.2rem 1.5rem;background:rgba(255,247,237,0.05);text-align:center;
-  border-right:0.5px solid var(--glass-border);
-  border-bottom:0.5px solid var(--glass-border);
-  transition:background 0.2s;
-}
-.about-stat:hover{background:rgba(245,158,11,0.07)}
-.about-stat:nth-child(2n){border-right:none}
-.about-stat:nth-child(n+3){border-bottom:none}
-.about-stat .num{
-  font-family:'Cormorant Garamond',serif;
-  font-size:3.2rem;font-weight:300;
-  color:var(--accent-bright);
-  display:block;line-height:1;
-}
-.about-stat .label{
-  font-family:'DM Sans',sans-serif;
-  font-size:0.8rem;font-weight:400;
-  letter-spacing:0.03em;text-transform:none;
-  color:var(--ink-muted);margin-top:0.6rem;display:block;
-  line-height:1.35;
-}
+  .btn-ghost {
+    color: var(--white-dim);
+    text-decoration: none;
+    font-size: 0.85rem;
+    display: flex; align-items: center; gap: 8px;
+    transition: color 0.3s, gap 0.3s;
+  }
+  .btn-ghost:hover { color: var(--white); gap: 14px; }
 
-.stack-row{
-  margin-top:2rem;border-top:0.5px solid var(--glass-border);padding-top:1.5rem;
-}
-.stack-label{
-  font-family:'JetBrains Mono',monospace;font-size:0.63rem;
-  letter-spacing:0.18em;text-transform:uppercase;
-  color:var(--ink-dim);margin-bottom:1rem;
-}
-.stack-chips{display:flex;flex-wrap:wrap;gap:0.5rem}
-.chip{
-  font-family:'JetBrains Mono',monospace;font-size:0.7rem;
-  letter-spacing:0.05em;padding:0.3rem 0.7rem;
-  border:0.5px solid var(--glass-border);border-radius:2px;
-  color:var(--ink-muted);background:rgba(245,158,11,0.04);
-}
+  /* hero scroll indicator */
+  .hero-scroll {
+    position: absolute;
+    bottom: 40px; left: 60px;
+    display: flex; align-items: center; gap: 12px;
+    opacity: 0;
+    animation: fade-up 0.8s 1.6s forwards;
+  }
+  .hero-scroll-line {
+    width: 1px; height: 60px;
+    background: linear-gradient(to bottom, transparent, var(--gold));
+    animation: scroll-line 2s ease-in-out infinite;
+  }
+  @keyframes scroll-line {
+    0%, 100% { transform: scaleY(1); opacity: 0.5; }
+    50% { transform: scaleY(1.3); opacity: 1; }
+  }
+  .hero-scroll span {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--white-dim);
+    writing-mode: vertical-rl;
+  }
 
-/* ─── CONTACT ────────────────────────────────────────── */
-.contact-wrap{max-width:600px;margin:0 auto;text-align:center}
-.contact-desc{
-  font-size:1rem;color:var(--ink-muted);
-  margin-bottom:2.5rem;line-height:1.8;
-}
-.contact-email{
-  font-family:'Cormorant Garamond',serif;
-  font-size:1.9rem;font-weight:300;font-style:italic;
-  color:var(--accent-soft);text-decoration:none;letter-spacing:0.01em;
-  display:inline-block;border-bottom:0.5px solid rgba(253,186,116,0.3);
-  padding-bottom:0.2rem;transition:color 0.2s,border-color 0.2s;
-}
-.contact-email:hover{color:var(--ink);border-color:rgba(255,255,255,0.3)}
+  /* hero stats */
+  .hero-stats {
+    position: absolute;
+    right: 60px; bottom: 60px;
+    display: flex; flex-direction: column; gap: 24px;
+    opacity: 0;
+    animation: fade-up 0.8s 1.5s forwards;
+  }
+  .hero-stat {
+    text-align: right;
+    border-right: 1px solid var(--border);
+    padding-right: 20px;
+  }
+  .hero-stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.2rem;
+    font-weight: 300;
+    color: var(--gold);
+    display: block;
+  }
+  .hero-stat-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    color: var(--white-dim);
+    text-transform: uppercase;
+  }
 
-/* ─── FOOTER ─────────────────────────────────────────── */
-footer{
-  border-top:0.5px solid var(--glass-border);
-  padding:2rem 3rem;display:flex;
-  align-items:center;justify-content:space-between;
-  background:var(--dark);
-}
-.footer-brand{
-  font-family:'Cormorant Garamond',serif;
-  font-size:1rem;font-weight:300;
-  color:var(--ink-dim);letter-spacing:0.06em;
-}
-.footer-links{display:flex;gap:2rem}
-.footer-links a{
-  font-size:0.73rem;letter-spacing:0.1em;text-transform:uppercase;
-  color:var(--ink-dim);text-decoration:none;transition:color 0.2s;
-}
-.footer-links a:hover{color:var(--ink-muted)}
+  /* ── SHADER CANVAS ── */
+  #hero-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%; height: 100%;
+    z-index: 1;
+    touch-action: none;
+  }
+  /* push decorative layers above canvas */
+  #hero .hero-bg   { z-index: 2; }
+  #hero .hero-grid { z-index: 2; }
+  #hero .orb       { z-index: 2; }
+  /* hero content above bg — only add z-index, never change position of absolute elements */
+  #hero .hero-tag      { position: relative; z-index: 20; }
+  #hero .hero-headline { position: relative; z-index: 20; }
+  #hero .hero-sub      { position: relative; z-index: 20; }
+  #hero .hero-actions  { position: relative; z-index: 20; }
+  #hero .hero-scroll   { z-index: 20; }   /* keeps its position:absolute */
+  #hero .hero-stats    { z-index: 20; }   /* keeps its position:absolute */
 
-/* ─── ANIMATIONS ─────────────────────────────────────── */
-@keyframes fadeUp{
-  from{opacity:0;transform:translateY(22px)}
-  to{opacity:1;transform:translateY(0)}
-}
-.reveal{
-  opacity:0;transform:translateY(28px);
-  transition:opacity 0.75s ease,transform 0.75s ease;
-}
-.reveal.visible{opacity:1;transform:none}
-.reveal-delay-1{transition-delay:0.1s}
-.reveal-delay-2{transition-delay:0.2s}
-.reveal-delay-3{transition-delay:0.3s}
-.reveal-delay-4{transition-delay:0.4s}
+  /* ── HERO CENTERED ── */
+  #hero { align-items: center; text-align: center; }
+  #hero .hero-tag       { justify-content: center; }
+  #hero .hero-sub       { margin-left: auto; margin-right: auto; }
+  #hero .hero-actions   { justify-content: center; }
+  #hero .hero-headline .line span { display: block; }
 
-/* ─── RESPONSIVE ─────────────────────────────────────── */
-@media(max-width:1024px){
-  .principles-grid{grid-template-columns:repeat(2,1fr)}
-  .principle:nth-child(2){border-right:none}
-  .principle:nth-child(3){border-right:0.5px solid var(--glass-border)}
-  .principle:nth-child(1),.principle:nth-child(2){border-bottom:0.5px solid var(--glass-border)}
-}
-@media(max-width:768px){
-  nav{padding:1.2rem 1.5rem}
-  .nav-links{display:none}
-  .hero h1{font-size:clamp(2.8rem,12vw,4.5rem)}
-  .hero-stats{gap:2.5rem;bottom:2rem}
-  .section-wrap{padding:5rem 1.5rem}
-  .featured-card{grid-template-columns:1fr}
-  .featured-card-image{min-height:300px;order:-1}
-  .img-overlay{background:linear-gradient(180deg,rgba(7,6,10,0) 60%,rgba(7,6,10,0.6) 100%)}
-  .about-layout{grid-template-columns:1fr;gap:3rem}
-  .principles-grid{grid-template-columns:1fr 1fr}
-  footer{flex-direction:column;gap:1.5rem;text-align:center;padding:1.5rem}
-}
-@media(max-width:500px){
-  .principles-grid{grid-template-columns:1fr}
-  .principle{border-right:none;border-bottom:0.5px solid var(--glass-border)}
-  .principle:last-child{border-bottom:none}
-}
-/* ─── ORBITAL TIMELINE ───────────────────────────────── */
-.orbital-wrap{
-  position:relative;width:100%;height:520px;
-  display:flex;align-items:center;justify-content:center;
-  margin-top:3.5rem;
-}
-.orb-center-wrap{
-  display:flex;align-items:center;justify-content:center;
-  width:56px;height:56px;position:relative;z-index:10;flex-shrink:0;
-}
-.orb-core{
-  width:28px;height:28px;border-radius:50%;
-  background:linear-gradient(135deg,#f59e0b,#fb923c,#fcd34d);
-  box-shadow:0 0 22px rgba(245,158,11,0.7);
-  animation:orb-glow 2s ease-in-out infinite;
-  position:relative;z-index:3;
-}
-@keyframes orb-glow{0%,100%{box-shadow:0 0 22px rgba(245,158,11,0.7)}50%{box-shadow:0 0 44px rgba(245,158,11,0.35)}}
-.orb-ring-inner{
-  position:absolute;width:66px;height:66px;border-radius:50%;
-  border:1px solid rgba(245,158,11,0.38);
-  animation:orb-ping 1.3s cubic-bezier(0,0,0.2,1) infinite;
-}
-.orb-ring-outer{
-  position:absolute;width:86px;height:86px;border-radius:50%;
-  border:1px solid rgba(245,158,11,0.18);
-  animation:orb-ping 1.3s cubic-bezier(0,0,0.2,1) infinite;
-  animation-delay:0.65s;
-}
-@keyframes orb-ping{0%{transform:scale(1);opacity:.8}100%{transform:scale(1.5);opacity:0}}
-.orbit-track{
-  position:absolute;width:380px;height:380px;border-radius:50%;
-  border:1px solid rgba(245,158,11,0.1);pointer-events:none;
-}
-.orb-node{
-  position:absolute;top:50%;left:50%;
-  width:0;height:0;will-change:transform,opacity;
-}
-.node-glow{
-  position:absolute;border-radius:50%;
-  background:radial-gradient(circle,rgba(245,158,11,0.18) 0%,transparent 70%);
-  pointer-events:none;top:50%;left:50%;transform:translate(-50%,-50%);
-}
-.node-btn{
-  position:absolute;top:-22px;left:-22px;
-  width:44px;height:44px;border-radius:50%;
-  border:1.5px solid rgba(245,158,11,0.32);
-  background:var(--dark);color:var(--ink-muted);
-  display:flex;align-items:center;justify-content:center;
-  font-size:1rem;cursor:pointer;
-  transition:all 0.35s cubic-bezier(0.34,1.56,0.64,1);
-}
-.orb-node:hover .node-btn:not(.active):not(.related){
-  border-color:rgba(245,158,11,0.55);
-  background:rgba(245,158,11,0.07);
-}
-.node-btn.active{
-  background:var(--accent);border-color:var(--accent-bright);
-  color:#07060a;transform:scale(1.45);
-  box-shadow:0 0 26px rgba(245,158,11,0.55);
-}
-.node-btn.related{
-  border-color:var(--accent);
-  background:rgba(245,158,11,0.1);
-  animation:node-pulse 1s ease-in-out infinite;
-}
-@keyframes node-pulse{0%,100%{box-shadow:0 0 6px rgba(245,158,11,0.3)}50%{box-shadow:0 0 20px rgba(245,158,11,0.65)}}
-.node-label{
-  position:absolute;top:26px;left:50%;transform:translateX(-50%);
-  white-space:nowrap;
-  font-family:'JetBrains Mono',monospace;
-  font-size:0.6rem;letter-spacing:0.13em;text-transform:uppercase;
-  color:rgba(255,247,237,0.45);pointer-events:none;
-  transition:color 0.3s;
-}
-/* Card popup */
-.node-card{
-  position:absolute;width:230px;
-  background:rgba(7,6,10,0.95);
-  border:0.5px solid rgba(245,158,11,0.28);
-  border-radius:8px;padding:1.1rem 1.2rem;
-  backdrop-filter:blur(20px);z-index:300;
-  left:50%;transform:translateX(-50%);
-  box-shadow:0 16px 48px rgba(0,0,0,0.75),0 0 24px rgba(245,158,11,0.07);
-  pointer-events:all;
-}
-.node-card::before{
-  content:'';position:absolute;
-  left:50%;transform:translateX(-50%);
-  width:1px;height:8px;background:rgba(245,158,11,0.35);
-}
-.node-card.card-below{top:30px;bottom:auto}
-.node-card.card-below::before{top:-8px}
-.node-card.card-above{bottom:30px;top:auto}
-.node-card.card-above::before{bottom:-8px}
-.nc-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:.65rem}
-.nc-status{
-  font-family:'JetBrains Mono',monospace;
-  font-size:0.57rem;letter-spacing:0.13em;text-transform:uppercase;
-  padding:.18rem .5rem;border-radius:2px;
-}
-.nc-done{background:rgba(74,222,128,.08);color:#4ade80;border:.5px solid rgba(74,222,128,.22)}
-.nc-wip{background:rgba(245,158,11,.1);color:var(--accent-bright);border:.5px solid rgba(245,158,11,.28)}
-.nc-pend{background:rgba(255,247,237,.04);color:var(--ink-muted);border:.5px solid var(--glass-border)}
-.nc-date{font-family:'JetBrains Mono',monospace;font-size:.57rem;color:var(--ink-dim)}
-.nc-title{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:400;color:var(--ink);margin-bottom:.45rem}
-.nc-desc{font-size:.78rem;color:var(--ink-muted);line-height:1.65;margin-bottom:.7rem}
-.nc-energy{border-top:.5px solid rgba(245,158,11,.1);padding-top:.65rem}
-.nc-elabel{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:.57rem;color:var(--ink-dim);margin-bottom:.35rem}
-.nc-bar{height:2px;background:rgba(255,247,237,.07);border-radius:1px;overflow:hidden}
-.nc-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-bright));border-radius:1px}
+  /* ── ROTATING WORD (single slot, swap via JS) ── */
+  .rotating-word {
+    display: inline-block;
+    font-style: italic;
+    color: var(--gold);
+    transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.16,1,0.3,1);
+  }
+  .rotating-word.fade-out {
+    opacity: 0;
+    transform: translateY(-30%);
+  }
+  .rotating-word.fade-in {
+    opacity: 0;
+    transform: translateY(30%);
+  }
+
+  /* ── SECTION COMMON ── */
+  section { padding: 120px 60px; position: relative; }
+
+  .section-tag {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+    display: flex; align-items: center; gap: 12px;
+    opacity: 0; transform: translateY(20px);
+    transition: opacity 0.7s, transform 0.7s;
+  }
+  .section-tag::before {
+    content: '';
+    display: inline-block;
+    width: 30px; height: 1px;
+    background: var(--gold);
+  }
+  .section-tag.visible { opacity: 1; transform: translateY(0); }
+
+  .section-headline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    font-weight: 300;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    margin-bottom: 20px;
+    opacity: 0; transform: translateY(30px);
+    transition: opacity 0.8s 0.1s, transform 0.8s 0.1s;
+  }
+  .section-headline.visible { opacity: 1; transform: translateY(0); }
+  .section-headline em { font-style: italic; color: var(--gold); }
+
+  .section-sub {
+    color: var(--white-dim);
+    font-size: 0.95rem;
+    max-width: 500px;
+    line-height: 1.8;
+    margin-bottom: 70px;
+    opacity: 0; transform: translateY(20px);
+    transition: opacity 0.7s 0.2s, transform 0.7s 0.2s;
+  }
+  .section-sub.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── HERO BOTTOM FADE ── */
+  #hero::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 260px;
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      rgba(7,8,10,0.55) 40%,
+      rgba(7,8,10,0.88) 70%,
+      var(--bg) 100%
+    );
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  /* ── APPS SECTION ── */
+  #apps { background: var(--bg); }
+
+  .apps-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+  }
+
+  .app-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 50px;
+    position: relative;
+    overflow: hidden;
+    opacity: 0; transform: translateY(40px);
+    transition: opacity 0.8s, transform 0.8s, border-color 0.4s;
+    cursor: none;
+  }
+  .app-card.visible { opacity: 1; transform: translateY(0); }
+  .app-card:hover { border-color: rgba(200,169,110,0.4); }
+
+  /* 3D tilt effect applied via JS */
+  .app-card-inner { transition: transform 0.1s; transform-style: preserve-3d; }
+
+  .app-card-glow {
+    position: absolute;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(200,169,110,0.08) 0%, transparent 70%);
+    pointer-events: none;
+    transition: opacity 0.3s;
+    opacity: 0;
+    transform: translate(-50%,-50%);
+    border-radius: 50%;
+  }
+  .app-card:hover .app-card-glow { opacity: 1; }
+
+  .app-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid var(--border);
+    padding: 6px 14px;
+    border-radius: 20px;
+    margin-bottom: 30px;
+  }
+  .app-badge-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+    animation: pulse-dot 2s infinite;
+  }
+
+  .app-icon {
+    font-size: 3.5rem;
+    margin-bottom: 24px;
+    display: block;
+    filter: drop-shadow(0 0 20px rgba(200,169,110,0.3));
+  }
+
+  .app-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.8rem;
+    font-weight: 300;
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
+  }
+
+  .app-desc {
+    color: var(--white-dim);
+    font-size: 0.9rem;
+    line-height: 1.8;
+    margin-bottom: 36px;
+    max-width: 380px;
+  }
+
+  .app-tags {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-bottom: 36px;
+  }
+  .tag {
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+    color: var(--white-dim);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 5px 12px;
+    border-radius: 2px;
+  }
+
+  .app-links { display: flex; gap: 16px; align-items: center; }
+
+  .app-link-primary {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    text-decoration: none;
+    border-bottom: 1px solid var(--gold);
+    padding-bottom: 2px;
+    transition: letter-spacing 0.3s;
+  }
+  .app-link-primary:hover { letter-spacing: 0.18em; }
+
+  .app-link-secondary {
+    font-size: 0.8rem;
+    color: var(--white-dim);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .app-link-secondary:hover { color: var(--white); }
+
+  /* coming soon card */
+  .app-card-soon {
+    background: repeating-linear-gradient(
+      -45deg,
+      var(--bg2),
+      var(--bg2) 10px,
+      rgba(200,169,110,0.02) 10px,
+      rgba(200,169,110,0.02) 20px
+    );
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    text-align: center; min-height: 400px;
+  }
+  .soon-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--white-dim);
+    margin-bottom: 16px;
+  }
+  .soon-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    font-weight: 300;
+    color: var(--white-dim);
+  }
+
+  /* ── PHILOSOPHY ── */
+  #nosotros { background: var(--bg2); overflow: hidden; }
+
+  .philosophy-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  .phil-card {
+    background: var(--bg2);
+    padding: 44px 36px;
+    position: relative;
+    overflow: hidden;
+    opacity: 0; transform: translateY(30px);
+    transition: opacity 0.7s, transform 0.7s;
+  }
+  .phil-card.visible { opacity: 1; transform: translateY(0); }
+  .phil-card:nth-child(2) { transition-delay: 0.1s; }
+  .phil-card:nth-child(3) { transition-delay: 0.2s; }
+  .phil-card:nth-child(4) { transition-delay: 0.3s; }
+
+  .phil-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold), transparent);
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .phil-card:hover::before { opacity: 1; }
+
+  .phil-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.8rem;
+    color: var(--gold-dim);
+    margin-bottom: 30px;
+    font-style: italic;
+  }
+
+  .phil-icon { font-size: 1.8rem; margin-bottom: 20px; display: block; }
+
+  .phil-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    margin-bottom: 14px;
+    color: var(--white);
+  }
+
+  .phil-desc {
+    font-size: 0.85rem;
+    color: var(--white-dim);
+    line-height: 1.8;
+  }
+
+  /* ── STATS STRIP ── */
+  #stats {
+    padding: 80px 60px;
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+  }
+  .stat-item {
+    text-align: center;
+    padding: 40px 20px;
+    border-right: 1px solid var(--border);
+    opacity: 0; transform: translateY(20px);
+    transition: opacity 0.6s, transform 0.6s;
+  }
+  .stat-item:last-child { border-right: none; }
+  .stat-item.visible { opacity: 1; transform: translateY(0); }
+  .stat-item:nth-child(2) { transition-delay: 0.1s; }
+  .stat-item:nth-child(3) { transition-delay: 0.2s; }
+  .stat-item:nth-child(4) { transition-delay: 0.3s; }
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--gold);
+    display: block;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .stat-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--white-dim);
+  }
+
+  /* ── ABOUT ── */
+  #sobre {
+    background: var(--bg);
+  }
+  .about-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 100px;
+    align-items: center;
+  }
+  .about-text .section-sub { margin-bottom: 40px; }
+
+  .about-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--white-dim);
+    border-left: 2px solid var(--gold);
+    padding-left: 28px;
+    line-height: 1.7;
+    margin-bottom: 40px;
+    opacity: 0; transform: translateX(-20px);
+    transition: opacity 0.8s 0.3s, transform 0.8s 0.3s;
+  }
+  .about-quote.visible { opacity: 1; transform: translateX(0); }
+
+  .about-stack {
+    opacity: 0; transform: translateY(20px);
+    transition: opacity 0.7s 0.2s, transform 0.7s 0.2s;
+  }
+  .about-stack.visible { opacity: 1; transform: translateY(0); }
+  .stack-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--white-dim);
+    margin-bottom: 16px;
+  }
+  .stack-items { display: flex; flex-wrap: wrap; gap: 10px; }
+  .stack-item {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--gold);
+    border: 1px solid var(--border);
+    padding: 8px 16px;
+    border-radius: 2px;
+    background: rgba(200,169,110,0.04);
+    transition: background 0.3s, border-color 0.3s;
+  }
+  .stack-item:hover { background: rgba(200,169,110,0.1); border-color: var(--gold); }
+
+  /* about visual side */
+  .about-visual {
+    position: relative;
+    opacity: 0; transform: translateX(40px);
+    transition: opacity 0.9s 0.2s, transform 0.9s 0.2s;
+  }
+  .about-visual.visible { opacity: 1; transform: translateX(0); }
+
+  .about-box {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 50px;
+    position: relative;
+  }
+  .about-box::before {
+    content: '';
+    position: absolute;
+    top: -1px; left: 40px; right: 40px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold), transparent);
+  }
+  .about-box-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    font-weight: 300;
+    margin-bottom: 30px;
+    color: var(--white-dim);
+  }
+  .timeline { list-style: none; }
+  .timeline-item {
+    display: flex; gap: 20px;
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .timeline-item:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+  .timeline-year {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.85rem;
+    color: var(--gold);
+    min-width: 50px;
+    padding-top: 2px;
+    font-style: italic;
+  }
+  .timeline-content { font-size: 0.85rem; color: var(--white-dim); line-height: 1.6; }
+  .timeline-content strong { color: var(--white); font-weight: 500; display: block; margin-bottom: 2px; }
+
+  /* corner accent */
+  .about-corner {
+    position: absolute;
+    bottom: -20px; right: -20px;
+    width: 80px; height: 80px;
+    border-right: 1px solid var(--gold);
+    border-bottom: 1px solid var(--gold);
+    opacity: 0.4;
+  }
+
+  /* ── CONTACT ── */
+  #contacto {
+    background: var(--bg2);
+    text-align: center;
+  }
+  .contact-inner {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  .contact-email {
+    display: inline-flex;
+    align-items: center;
+    gap: 16px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.5rem, 3vw, 2.5rem);
+    font-weight: 300;
+    color: var(--white);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+    margin-bottom: 50px;
+    transition: border-color 0.3s, color 0.3s;
+    opacity: 0; transform: translateY(20px);
+    transition: opacity 0.7s 0.2s, transform 0.7s 0.2s, border-color 0.3s;
+  }
+  .contact-email.visible { opacity: 1; transform: translateY(0); }
+  .contact-email:hover { color: var(--gold); border-color: var(--gold); }
+
+  .contact-location {
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--white-dim);
+    margin-bottom: 60px;
+    opacity: 0;
+    transition: opacity 0.7s 0.3s;
+  }
+  .contact-location.visible { opacity: 1; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--bg);
+    padding: 40px 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--border);
+  }
+  .footer-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 0.95rem;
+    letter-spacing: 0.1em;
+    color: var(--white-dim);
+  }
+  .footer-copy {
+    font-size: 0.75rem;
+    color: var(--white-dim);
+    opacity: 0.5;
+    letter-spacing: 0.05em;
+  }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a {
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    color: var(--white-dim);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .footer-links a:hover { color: var(--gold); }
+
+  /* ── PAGE TRANSITION ── */
+  .page-loader {
+    position: fixed; inset: 0;
+    background: var(--bg);
+    z-index: 99999;
+    display: flex; align-items: center; justify-content: center;
+    animation: loader-out 0.8s 1.8s cubic-bezier(0.76,0,0.24,1) forwards;
+  }
+  .loader-bar {
+    position: absolute;
+    bottom: 0; left: 0;
+    height: 2px;
+    background: var(--gold);
+    animation: loader-bar 1.6s cubic-bezier(0.16,1,0.3,1) forwards;
+  }
+  @keyframes loader-bar {
+    0% { width: 0; }
+    100% { width: 100%; }
+  }
+  @keyframes loader-out {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-100%); }
+  }
+  .loader-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-weight: 300;
+    color: var(--white-dim);
+    letter-spacing: 0.2em;
+    animation: loader-text-fade 1.8s ease forwards;
+  }
+  @keyframes loader-text-fade {
+    0%, 80% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav { padding: 20px 30px; }
+    nav.scrolled { padding: 14px 30px; }
+    .nav-links { gap: 20px; }
+    #hero, section, footer { padding-left: 30px; padding-right: 30px; }
+    .hero-stats { right: 30px; bottom: 30px; }
+    .hero-scroll { left: 30px; bottom: 30px; }
+    .apps-grid { grid-template-columns: 1fr; }
+    .philosophy-grid { grid-template-columns: 1fr 1fr; }
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .about-layout { grid-template-columns: 1fr; gap: 50px; }
+    .about-visual { order: -1; }
+    #stats { padding: 60px 30px; }
+  }
+  @media (max-width: 600px) {
+    .philosophy-grid { grid-template-columns: 1fr; }
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .nav-links { display: none; }
+  }
 </style>
 </head>
 <body>
 
-<!-- ─── NAV ──────────────────────────────────────────── -->
+<!-- PAGE LOADER -->
+<div class="page-loader">
+  <div class="loader-text">Kairos Studio</div>
+  <div class="loader-bar"></div>
+</div>
+
+<!-- CURSOR -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- NAV -->
 <nav id="nav">
-  <a href="#" class="nav-logo">Kairos<span>.</span></a>
-  <div class="nav-links">
-    <a href="#apps">Apps</a>
-    <a href="#proceso">Proceso</a>
-    <a href="#nosotros">Nosotros</a>
-    <a href="#contacto">Contacto</a>
-    <a href="mailto:aritz.codes@gmail.com" class="nav-cta">Escríbenos</a>
-  </div>
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-dot"></div>
+    KAIROS STUDIO
+  </a>
+  <ul class="nav-links">
+    <li><a href="#apps">Apps</a></li>
+    <li><a href="#nosotros">Nosotros</a></li>
+    <li><a href="#sobre">Estudio</a></li>
+    <li><a href="#contacto" class="nav-cta">Contactar</a></li>
+  </ul>
 </nav>
 
-<!-- ─── HERO ──────────────────────────────────────────── -->
-<section class="hero-section">
-  <canvas id="bg" aria-hidden="true"></canvas>
-  <div class="hero-vignette"></div>
+<!-- HERO -->
+<section id="hero">
+  <!-- WebGL Shader Background -->
+  <canvas id="hero-canvas"></canvas>
 
-  <div class="hero-content">
-    <p class="hero-eyebrow">Estudio independiente · España</p>
-    <h1>
-      <span class="line1">Apps que</span>
-      <span class="line2-wrap">
-        <span class="rotating-word active">importan</span>
-        <span class="rotating-word">evolucionan</span>
-        <span class="rotating-word">transforman</span>
-        <span class="rotating-word">desafían</span>
-        <span class="rotating-word">impulsan</span>
-        <span class="rotating-word">sorprenden</span>
-      </span>
-    </h1>
-    <p class="hero-sub">Construimos herramientas simples, honestas y bien hechas para personas reales. Sin ruido, sin relleno. Solo lo que necesitas.</p>
-    <div class="hero-actions">
-      <a href="#apps" class="btn-primary">Ver nuestras apps</a>
-      <a href="#contacto" class="btn-ghost">Contactar</a>
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
+  <div class="hero-tag">Estudio independiente · España · 2024</div>
+
+  <h1 class="hero-headline">
+    <div class="line"><span>Apps que</span></div>
+    <div class="line"><span><em>de verdad</em></span></div>
+    <div class="line"><span><span class="rotating-word" id="rotatingWord">importan.</span></span></div>
+  </h1>
+
+  <p class="hero-sub">
+    Construimos herramientas simples, honestas y bien hechas para personas reales.
+    Sin ruido, sin relleno. Solo lo que necesitas.
+  </p>
+
+  <div class="hero-actions">
+    <a href="#apps" class="btn-primary">Ver nuestras apps</a>
+    <a href="#contacto" class="btn-ghost">Contactar <span>→</span></a>
+  </div>
+
+  <div class="hero-scroll">
+    <div class="hero-scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <span class="hero-stat-num">0</span>
+      <span class="hero-stat-label">Anuncios intrusivos</span>
     </div>
-    <div class="hero-stats">
-      <div class="stat-item">
-        <span class="stat-num">0</span>
-        <span class="stat-label">Anuncios intrusivos</span>
+    <div class="hero-stat">
+      <span class="hero-stat-num">100%</span>
+      <span class="hero-stat-label">Datos locales</span>
+    </div>
+  </div>
+</section>
+
+<!-- APPS -->
+<section id="apps">
+  <div class="section-tag">Lo que hemos construido</div>
+  <h2 class="section-headline">Nuestras <em>apps</em></h2>
+  <p class="section-sub">Cada app nace de una necesidad real. Sin funciones de relleno, sin ruido.</p>
+
+  <div class="apps-grid">
+    <!-- App 1 -->
+    <div class="app-card" id="card-oporecord">
+      <div class="app-card-glow"></div>
+      <div class="app-card-inner">
+        <div class="app-badge"><div class="app-badge-dot"></div> Disponible · Android</div>
+        <span class="app-icon">🏋️</span>
+        <h3 class="app-name">OpoRecord</h3>
+        <p class="app-desc">
+          Registra tus marcas físicas, temario y psicotécnicos para preparar oposiciones en España.
+          Baremos oficiales incluidos. Sin complicaciones.
+        </p>
+        <div class="app-tags">
+          <span class="tag">Flutter</span>
+          <span class="tag">Android</span>
+          <span class="tag">Local Storage</span>
+          <span class="tag">Oposiciones</span>
+        </div>
+        <div class="app-links">
+          <a href="https://kairosstudiobyaritz.github.io/oporecord-landing.html" class="app-link-primary" target="_blank">Ver más →</a>
+          <a href="https://play.google.com/store" class="app-link-secondary" target="_blank">↗ Play Store</a>
+        </div>
       </div>
-      <div class="stat-item">
-        <span class="stat-num">100%</span>
-        <span class="stat-label">Datos locales</span>
+    </div>
+
+    <!-- App 2 - Coming soon -->
+    <div class="app-card app-card-soon" id="card-next">
+      <div class="app-card-glow"></div>
+      <div class="app-card-inner">
+        <div class="soon-label">En desarrollo</div>
+        <div class="app-name soon-title" style="color:var(--white-dim); font-size:2.5rem;">
+          Algo nuevo<br>está llegando
+        </div>
+        <p style="color:var(--white-dim); font-size:0.82rem; margin-top:20px; opacity:0.6;">
+          Siempre construyendo. Síguenos para no perderte el lanzamiento.
+        </p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ─── APPS ──────────────────────────────────────────── -->
-<div class="section-wrap" id="apps">
-  <div class="reveal">
-    <span class="section-tag">// nuestras apps</span>
-    <h2 class="section-title">Lo que hemos <em>construido</em></h2>
-  </div>
-
-  <div class="featured-card reveal">
-    <div class="featured-card-content">
-      <span class="app-badge">
-        <span style="width:6px;height:6px;border-radius:50%;background:#4ade80;display:inline-block"></span>
-        Disponible en Android
-      </span>
-      <span class="app-icon">🏋️</span>
-      <h3>OpoRecord</h3>
-      <p>Registra tus marcas físicas, temario y psicotécnicos para preparar oposiciones en España. Baremos oficiales incluidos. Sin suscripciones agresivas.</p>
-      <div class="app-links">
-        <a href="https://kairosstudiobyaritz.github.io/oporecord-landing.html" class="app-link">Ver la app →</a>
-        <a href="https://play.google.com/store" class="app-link">Play Store ↗</a>
-      </div>
-      <span class="platform-tag">📱 Android · iOS próximamente</span>
+<!-- STATS -->
+<div id="stats">
+  <div class="stats-grid">
+    <div class="stat-item">
+      <span class="stat-num" data-target="1">0</span>
+      <span class="stat-label">App publicada</span>
     </div>
-    <div class="featured-card-image">
-      <img
-        src="ImageniPhone17NaranjaOpoRecord.png"
-        alt="Mano sosteniendo un iPhone naranja con la app OpoRecord desbloqueada en pantalla"
-        loading="lazy"
-      />
-      <div class="img-overlay"></div>
-      <div class="img-warmlight"></div>
-      <div class="img-scanline"></div>
+    <div class="stat-item">
+      <span class="stat-num">+10</span>
+      <span class="stat-label">Tecnologías dominadas</span>
     </div>
-  </div>
-
-  <div class="coming-soon-card reveal">
-    <div>
-      <div class="cs-badge">✦ &nbsp;Próximamente</div>
-      <h3>Siguiente app</h3>
-      <p>Siempre estamos construyendo algo nuevo. Síguenos para no perderte el lanzamiento.</p>
+    <div class="stat-item">
+      <span class="stat-num">0</span>
+      <span class="stat-label">Anuncios intrusivos</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">100%</span>
+      <span class="stat-label">Datos locales</span>
     </div>
   </div>
 </div>
 
-<!-- ─── FILOSOFÍA ─────────────────────────────────────── -->
-<div class="section-wrap alt" id="filosofia">
-  <div class="reveal">
-    <span class="section-tag">// filosofía</span>
-    <h2 class="section-title">Cómo hacemos <em>las cosas</em></h2>
-  </div>
-  <div class="principles-grid">
-    <div class="principle reveal reveal-delay-1">
-      <div class="principle-icon">🎯</div>
-      <h4>Enfocado</h4>
-      <p>Una app hace una cosa bien. Sin funciones innecesarias que compliquen la experiencia.</p>
-    </div>
-    <div class="principle reveal reveal-delay-2">
-      <div class="principle-icon">🔒</div>
-      <h4>Privacidad primero</h4>
-      <p>Tus datos son tuyos. No vendemos información, no rastreamos sin consentimiento.</p>
-    </div>
-    <div class="principle reveal reveal-delay-3">
-      <div class="principle-icon">⚡</div>
-      <h4>Rápido y ligero</h4>
-      <p>Nuestras apps funcionan bien incluso en dispositivos modestos.</p>
-    </div>
-    <div class="principle reveal reveal-delay-4">
-      <div class="principle-icon">🤝</div>
-      <h4>Accesible</h4>
-      <p>Sin suscripciones agresivas. Gratis donde importa, premium donde aporta.</p>
-    </div>
-  </div>
-</div>
+<!-- PHILOSOPHY -->
+<section id="nosotros">
+  <div class="section-tag">Nuestra filosofía</div>
+  <h2 class="section-headline">Cómo hacemos<br><em>las cosas</em></h2>
+  <p class="section-sub">Principios que guían cada decisión de diseño y desarrollo.</p>
 
-<!-- ─── PROCESO ───────────────────────────────────────── -->
-<div class="section-wrap" id="proceso">
-  <div class="reveal">
-    <span class="section-tag">// proceso</span>
-    <h2 class="section-title">El viaje de <em>una app</em></h2>
-  </div>
-  <div class="orbital-wrap" id="orbital-wrap">
-    <div class="orb-center-wrap">
-      <div class="orb-ring-outer"></div>
-      <div class="orb-ring-inner"></div>
-      <div class="orb-core"></div>
+  <div class="philosophy-grid">
+    <div class="phil-card">
+      <div class="phil-num">01</div>
+      <span class="phil-icon">🎯</span>
+      <div class="phil-title">Enfocado</div>
+      <div class="phil-desc">Una app hace una cosa bien. Sin funciones innecesarias que compliquen la experiencia del usuario.</div>
     </div>
-    <div class="orbit-track"></div>
-    <!-- nodes injected by JS -->
+    <div class="phil-card">
+      <div class="phil-num">02</div>
+      <span class="phil-icon">🔒</span>
+      <div class="phil-title">Privacidad primero</div>
+      <div class="phil-desc">Tus datos son tuyos. No vendemos información, no rastreamos sin consentimiento explícito.</div>
+    </div>
+    <div class="phil-card">
+      <div class="phil-num">03</div>
+      <span class="phil-icon">⚡</span>
+      <div class="phil-title">Rápido y ligero</div>
+      <div class="phil-desc">Las apps que construimos funcionan bien incluso en dispositivos modestos. Sin excusas.</div>
+    </div>
+    <div class="phil-card">
+      <div class="phil-num">04</div>
+      <span class="phil-icon">🤝</span>
+      <div class="phil-title">Accesible</div>
+      <div class="phil-desc">Sin suscripciones agresivas. Modelo honesto: gratis donde importa, premium donde aporta valor real.</div>
+    </div>
   </div>
-</div>
+</section>
 
-<!-- ─── NOSOTROS ──────────────────────────────────────── -->
-<div class="section-wrap" id="nosotros">
+<!-- ABOUT -->
+<section id="sobre">
   <div class="about-layout">
-    <div>
-      <div class="reveal">
-        <span class="section-tag">// sobre nosotros</span>
-        <h2 class="section-title">Un estudio pequeño <em>con grandes ideas</em></h2>
-      </div>
-      <div class="about-copy reveal">
-        <p>Kairos Studio nació en España con una misión simple: hacer apps que de verdad ayuden a la gente en su día a día.</p>
-        <p>Sin inversores, sin presiones, sin compromisos.</p>
-      </div>
-      <div class="stack-row reveal">
-        <p class="stack-label">Stack tecnológico</p>
-        <div class="stack-chips">
-          <span class="chip">Flutter</span>
-          <span class="chip">Dart</span>
-          <span class="chip">Android</span>
-          <span class="chip">iOS (próximo)</span>
-          <span class="chip">Material Design 3</span>
-          <span class="chip">Local Storage</span>
-          <span class="chip">Google Play</span>
+    <div class="about-text">
+      <div class="section-tag">Sobre el estudio</div>
+      <h2 class="section-headline">Un estudio pequeño<br>con <em>grandes ideas</em></h2>
+      <p class="section-sub">
+        Kairos Studio nació en España con una misión simple: hacer apps que de verdad ayuden
+        a la gente en su día a día. Sin inversores, sin presiones, sin compromisos.
+      </p>
+
+      <blockquote class="about-quote">
+        "Kairos" — el momento oportuno. Cada app que lanzamos nace cuando algo realmente falta.
+      </blockquote>
+
+      <div class="about-stack">
+        <div class="stack-label">Stack tecnológico</div>
+        <div class="stack-items">
+          <span class="stack-item">Flutter</span>
+          <span class="stack-item">Dart</span>
+          <span class="stack-item">Android</span>
+          <span class="stack-item">Material Design 3</span>
+          <span class="stack-item">Local Storage</span>
+          <span class="stack-item">Google Play</span>
+          <span class="stack-item">iOS — Próximamente</span>
         </div>
       </div>
     </div>
-    <div class="reveal">
-      <div class="about-stats">
-        <div class="about-stat">
-          <span class="num">1+</span>
-          <span class="label">App publicada</span>
-        </div>
-        <div class="about-stat">
-          <span class="num">5+</span>
-          <span class="label">Oposiciones cubiertas</span>
-        </div>
-        <div class="about-stat">
-          <span class="num">0</span>
-          <span class="label">Anuncios intrusivos</span>
-        </div>
-        <div class="about-stat">
-          <span class="num">100%</span>
-          <span class="label">Datos locales</span>
-        </div>
+
+    <div class="about-visual">
+      <div class="about-box">
+        <div class="about-box-title">Historia del estudio</div>
+        <ul class="timeline">
+          <li class="timeline-item">
+            <span class="timeline-year">2026</span>
+            <div class="timeline-content">
+              <strong>Fundación de Kairos Studio</strong>
+              Nace el estudio con la misión de crear apps útiles para el mercado español.
+            </div>
+          </li>
+          <li class="timeline-item">
+            <span class="timeline-year">2026</span>
+            <div class="timeline-content">
+              <strong>Lanzamiento de OpoRecord</strong>
+              Primera app publicada en Google Play. Baremos oficiales, marcas físicas y psicotécnicos.
+            </div>
+          </li>
+          <li class="timeline-item">
+            <span class="timeline-year">2026</span>
+            <div class="timeline-content">
+              <strong>Expansión del catálogo</strong>
+              Nuevas apps en desarrollo. iOS en el horizonte. El estudio sigue creciendo.
+            </div>
+          </li>
+        </ul>
       </div>
+      <div class="about-corner"></div>
     </div>
   </div>
-</div>
+</section>
 
-<!-- ─── CONTACTO ──────────────────────────────────────── -->
-<div class="section-wrap alt" id="contacto">
-  <div class="contact-wrap reveal">
-    <span class="section-tag">// contacto</span>
-    <h2 class="section-title">¿Tienes una idea <em>o feedback?</em></h2>
-    <p class="contact-desc">Nos encanta escuchar a los usuarios. Si tienes una sugerencia, un bug que reportar o simplemente quieres hablar, escríbenos.</p>
-    <a href="mailto:aritz.codes@gmail.com" class="contact-email">aritz.codes@gmail.com</a>
+<!-- CONTACT -->
+<section id="contacto">
+  <div class="contact-inner">
+    <div class="section-tag" style="justify-content:center;">Contacto</div>
+    <h2 class="section-headline">¿Tienes una idea<br>o <em>feedback</em>?</h2>
+    <p class="section-sub" style="margin:0 auto 50px; text-align:center;">
+      Nos encanta escuchar a los usuarios. Si tienes una sugerencia, un bug que reportar
+      o simplemente quieres hablar, escríbenos.
+    </p>
+    <a href="mailto:aritz.codes@gmail.com" class="contact-email">
+      ✉️ aritz.codes@gmail.com
+    </a>
+    <div class="contact-location">📍 España · Disponible a nivel global</div>
+    <a href="mailto:aritz.codes@gmail.com" class="btn-primary">Escribir ahora</a>
   </div>
-</div>
+</section>
 
-<!-- ─── FOOTER ────────────────────────────────────────── -->
+<!-- FOOTER -->
 <footer>
-  <span class="footer-brand">Kairos Studio · Hecho con ❤ en España · © 2026</span>
+  <div class="footer-logo">KAIROS STUDIO</div>
+  <div class="footer-copy">© 2026 · Hecho con ❤️ en España</div>
   <div class="footer-links">
     <a href="https://kairosstudiobyaritz.github.io/faq.html">FAQ</a>
     <a href="https://kairosstudiobyaritz.github.io/privacy.html">Privacidad</a>
+    <a href="mailto:aritz.codes@gmail.com">Contacto</a>
   </div>
 </footer>
 
-<!-- ─── SCRIPTS ───────────────────────────────────────── -->
 <script>
-(function(){
-"use strict";
+  // ── CURSOR
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  let cx = 0, cy = 0, rx = 0, ry = 0;
 
-const canvas = document.getElementById('bg');
-const gl = canvas.getContext('webgl2');
+  document.addEventListener('mousemove', e => {
+    cx = e.clientX; cy = e.clientY;
+    cursor.style.left = cx + 'px';
+    cursor.style.top = cy + 'px';
+  });
 
-if(!gl){ canvas.style.display='none'; return; }
+  function animateRing() {
+    rx += (cx - rx) * 0.12;
+    ry += (cy - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
 
-const VS = `#version 300 es
+  // ── NAV SCROLL
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  // ── INTERSECTION OBSERVER
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll(
+    '.section-tag, .section-headline, .section-sub, .app-card, .phil-card, .stat-item, .about-quote, .about-stack, .about-visual, .contact-email, .contact-location'
+  ).forEach(el => observer.observe(el));
+
+  // ── CARD 3D TILT
+  document.querySelectorAll('.app-card').forEach(card => {
+    const glow = card.querySelector('.app-card-glow');
+    card.addEventListener('mousemove', e => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const cx2 = rect.width / 2;
+      const cy2 = rect.height / 2;
+      const rotX = (y - cy2) / cy2 * -6;
+      const rotY = (x - cx2) / cx2 * 6;
+      card.style.transform = `perspective(1000px) rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+      if (glow) {
+        glow.style.left = x + 'px';
+        glow.style.top = y + 'px';
+      }
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
+    });
+  });
+
+  // ── COUNTER ANIMATION
+  function animateCounter(el, target, suffix = '') {
+    let start = 0;
+    const duration = 1800;
+    const startTime = performance.now();
+    function update(now) {
+      const progress = Math.min((now - startTime) / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 4);
+      el.textContent = Math.round(start + (target - start) * ease) + suffix;
+      if (progress < 1) requestAnimationFrame(update);
+      else el.textContent = target + suffix;
+    }
+    requestAnimationFrame(update);
+  }
+
+  const counterObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const el = e.target;
+        const target = parseInt(el.dataset.target);
+        if (!isNaN(target)) animateCounter(el, target, el.dataset.suffix || '+');
+        counterObs.unobserve(el);
+      }
+    });
+  }, { threshold: 0.5 });
+
+  document.querySelectorAll('[data-target]').forEach(el => counterObs.observe(el));
+
+  // ── SMOOTH SCROLL
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  });
+
+  // ── WORD CYCLING (single span, swap text with fade)
+  (function() {
+    const el = document.getElementById('rotatingWord');
+    if (!el) return;
+    const words = ['importan.','desafían.','impulsan.','sorprenden.','evolucionan.','transforman.'];
+    let idx = 0;
+    setInterval(() => {
+      // fade out
+      el.classList.add('fade-out');
+      setTimeout(() => {
+        // swap word, prepare fade-in position
+        idx = (idx + 1) % words.length;
+        el.textContent = words[idx];
+        el.classList.remove('fade-out');
+        el.classList.add('fade-in');
+        // force reflow then animate in
+        el.getBoundingClientRect();
+        el.classList.remove('fade-in');
+      }, 320);
+    }, 2400);
+  })();
+
+  // ── WEBGL SHADER HERO
+  (function() {
+    const canvas = document.getElementById('hero-canvas');
+    if (!canvas) return;
+
+    const gl = canvas.getContext('webgl2');
+    if (!gl) return;
+
+    const vertSrc = `#version 300 es
 precision highp float;
 in vec4 position;
 void main(){ gl_Position = position; }`;
 
-const FS = `#version 300 es
+    const fragSrc = `#version 300 es
 precision highp float;
 out vec4 O;
 uniform vec2 resolution;
 uniform float time;
-uniform vec2 move;
 uniform vec2 touch;
-uniform int pointerCount;
-
+uniform vec2 move;
 #define FC gl_FragCoord.xy
 #define T time
 #define R resolution
 #define MN min(R.x,R.y)
-
 float rnd(vec2 p){
   p=fract(p*vec2(12.9898,78.233));
   p+=dot(p,p+34.56);
   return fract(p.x*p.y);
 }
-
 float noise(in vec2 p){
   vec2 i=floor(p),f=fract(p),u=f*f*(3.-2.*f);
   float a=rnd(i),b=rnd(i+vec2(1,0)),c=rnd(i+vec2(0,1)),d=rnd(i+1.);
   return mix(mix(a,b,u.x),mix(c,d,u.x),u.y);
 }
-
 float fbm(vec2 p){
-  float t=.0,a=1.;mat2 m=mat2(1.,-.5,.2,1.2);
+  float t=.0,a=1.;
+  mat2 m=mat2(1.,-.5,.2,1.2);
   for(int i=0;i<5;i++){t+=a*noise(p);p*=2.*m;a*=.5;}
   return t;
 }
-
 float clouds(vec2 p){
   float d=1.,t=.0;
   for(float i=.0;i<3.;i++){
@@ -859,9 +1375,8 @@ float clouds(vec2 p){
   }
   return t;
 }
-
 void main(void){
-  vec2 uv=(FC-.5*R)/MN, st=uv*vec2(2,1);
+  vec2 uv=(FC-.5*R)/MN,st=uv*vec2(2,1);
   vec3 col=vec3(0);
   float bg=clouds(vec2(st.x+T*.5,-st.y));
   uv*=1.-.3*(sin(T*.2)*.5+.5);
@@ -877,248 +1392,63 @@ void main(void){
   O=vec4(col,1);
 }`;
 
-function mkShader(type, src){
-  const s = gl.createShader(type);
-  gl.shaderSource(s, src);
-  gl.compileShader(s);
-  if(!gl.getShaderParameter(s, gl.COMPILE_STATUS)){
-    console.error(gl.getShaderInfoLog(s));
-  }
-  return s;
-}
-
-const prog = gl.createProgram();
-gl.attachShader(prog, mkShader(gl.VERTEX_SHADER, VS));
-gl.attachShader(prog, mkShader(gl.FRAGMENT_SHADER, FS));
-gl.linkProgram(prog);
-
-if(!gl.getProgramParameter(prog, gl.LINK_STATUS)){
-  console.error(gl.getProgramInfoLog(prog));
-  return;
-}
-
-const buf = gl.createBuffer();
-gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,1,-1,-1,1,1,1,-1]), gl.STATIC_DRAW);
-
-const posLoc  = gl.getAttribLocation(prog,'position');
-const resLoc  = gl.getUniformLocation(prog,'resolution');
-const timeLoc = gl.getUniformLocation(prog,'time');
-const moveLoc = gl.getUniformLocation(prog,'move');
-const touchLoc= gl.getUniformLocation(prog,'touch');
-const pCntLoc = gl.getUniformLocation(prog,'pointerCount');
-
-let mouseMove=[0,0], mouseCoords=[0,0], pCount=0, active=false;
-
-const mapCoord = (x,y)=>[x*dpr, canvas.height - y*dpr];
-
-canvas.addEventListener('pointermove', e=>{
-  if(!active) return;
-  mouseCoords = mapCoord(e.clientX, e.clientY);
-  mouseMove = [mouseMove[0]+e.movementX, mouseMove[1]+e.movementY];
-});
-canvas.addEventListener('pointerdown', ()=>{ active=true; pCount++; });
-canvas.addEventListener('pointerup',   ()=>{ pCount=Math.max(0,pCount-1); if(!pCount) active=false; });
-canvas.addEventListener('pointerleave',()=>{ active=false; });
-
-let dpr = Math.max(1, 0.5*window.devicePixelRatio);
-function resize(){
-  dpr = Math.max(1, 0.5*window.devicePixelRatio);
-  canvas.width  = window.innerWidth  * dpr;
-  canvas.height = window.innerHeight * dpr;
-  gl.viewport(0,0,canvas.width,canvas.height);
-}
-window.addEventListener('resize', resize);
-resize();
-
-const t0 = performance.now();
-function render(now){
-  const t = (now - t0) * 1e-3;
-  gl.clearColor(0,0,0,1);
-  gl.clear(gl.COLOR_BUFFER_BIT);
-  gl.useProgram(prog);
-  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-  gl.enableVertexAttribArray(posLoc);
-  gl.vertexAttribPointer(posLoc,2,gl.FLOAT,false,0,0);
-  gl.uniform2f(resLoc, canvas.width, canvas.height);
-  gl.uniform1f(timeLoc, t);
-  gl.uniform2f(moveLoc, ...mouseMove);
-  gl.uniform2f(touchLoc,...mouseCoords);
-  gl.uniform1i(pCntLoc, pCount);
-  gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
-  requestAnimationFrame(render);
-}
-requestAnimationFrame(render);
-
-window.addEventListener('scroll',()=>{
-  document.getElementById('nav')
-    .classList.toggle('scrolled', window.scrollY > 60);
-});
-
-const io = new IntersectionObserver(entries=>{
-  entries.forEach(e=>{
-    if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target); }
-  });
-},{threshold:0.1});
-document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
-
-/* ── Rotating word ─────────────────────────────────── */
-const words   = Array.from(document.querySelectorAll('.rotating-word'));
-let   current = 0;
-
-setInterval(() => {
-  const prev = current;
-  current = (current + 1) % words.length;
-
-  /* exit current */
-  words[prev].classList.remove('active');
-  words[prev].classList.add('exit');
-  setTimeout(() => words[prev].classList.remove('exit'), 450);
-
-  /* enter next */
-  words[current].classList.add('active');
-}, 2200);
-
-})();
-</script>
-<script>
-(function(){
-  const data = [
-    {
-      id:1,title:'Concepto',date:'Fase 01',
-      content:'La idea nace de un problema real. Escuchamos, investigamos y validamos que merece resolverse antes de escribir una sola línea de código.',
-      icon:'💡',relatedIds:[2,5],status:'completed',energy:18
-    },
-    {
-      id:2,title:'Diseño',date:'Fase 02',
-      content:'UI/UX, wireframes y arquitectura técnica. Definimos cada pantalla y cada flujo. La experiencia del usuario siempre antes que el código.',
-      icon:'✏️',relatedIds:[1,3],status:'completed',energy:38
-    },
-    {
-      id:3,title:'Desarrollo',date:'Fase 03',
-      content:'Flutter, Dart y Material Design 3. Código limpio, rendimiento primero. Construimos funcionalidades sin relleno innecesario.',
-      icon:'⚡',relatedIds:[2,4],status:'in-progress',energy:62
-    },
-    {
-      id:4,title:'Testing',date:'Fase 04',
-      content:'Pruebas reales con usuarios reales. Cada bug es una oportunidad de mejorar. Iteramos hasta que la experiencia sea impecable.',
-      icon:'🔍',relatedIds:[3,5],status:'pending',energy:85
-    },
-    {
-      id:5,title:'Lanzamiento',date:'Fase 05',
-      content:'Google Play Store y más allá. No es el final, es el inicio de la siguiente iteración. Escuchamos, aprendemos y mejoramos.',
-      icon:'🚀',relatedIds:[4,1],status:'pending',energy:100
+    function makeShader(type, src) {
+      const s = gl.createShader(type);
+      gl.shaderSource(s, src);
+      gl.compileShader(s);
+      return s;
     }
-  ];
 
-  const wrap = document.getElementById('orbital-wrap');
-  if(!wrap) return;
+    const prog = gl.createProgram();
+    gl.attachShader(prog, makeShader(gl.VERTEX_SHADER, vertSrc));
+    gl.attachShader(prog, makeShader(gl.FRAGMENT_SHADER, fragSrc));
+    gl.linkProgram(prog);
 
-  const RADIUS = Math.min(175, window.innerWidth * 0.38);
-  let rotAngle = 0, autoRot = true, activeId = null;
-  const els = {};
+    const buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,1,-1,-1,1,1,1,-1]), gl.STATIC_DRAW);
 
-  /* Build node elements */
-  data.forEach(item => {
-    const el = document.createElement('div');
-    el.className = 'orb-node';
-    const glowSize = item.energy * 0.35 + 36;
-    el.innerHTML = `
-      <div class="node-glow" style="width:${glowSize}px;height:${glowSize}px"></div>
-      <div class="node-btn" id="nb-${item.id}">${item.icon}</div>
-      <div class="node-label" id="nl-${item.id}">${item.title}</div>`;
-    wrap.appendChild(el);
-    els[item.id] = el;
-    el.addEventListener('click', e => { e.stopPropagation(); toggle(item.id); });
-  });
+    const pos = gl.getAttribLocation(prog, 'position');
+    gl.enableVertexAttribArray(pos);
+    gl.vertexAttribPointer(pos, 2, gl.FLOAT, false, 0, 0);
 
-  function pos(idx) {
-    const angle = ((idx / data.length) * 360 + rotAngle) % 360;
-    const r = (angle * Math.PI) / 180;
-    return {
-      x: RADIUS * Math.cos(r),
-      y: RADIUS * Math.sin(r),
-      zi: Math.round(100 + 50 * Math.cos(r)),
-      op: Math.max(0.4, Math.min(1, 0.4 + 0.6 * ((1 + Math.sin(r)) / 2)))
-    };
-  }
+    const uRes   = gl.getUniformLocation(prog, 'resolution');
+    const uTime  = gl.getUniformLocation(prog, 'time');
+    const uTouch = gl.getUniformLocation(prog, 'touch');
+    const uMove  = gl.getUniformLocation(prog, 'move');
 
-  function toggle(id) {
-    if(activeId === id){ reset(); return; }
-    reset(false);
-    activeId = id;
-    autoRot = false;
+    let mouseX = 0, mouseY = 0, moveX = 0, moveY = 0;
 
-    document.getElementById(`nb-${id}`).classList.add('active');
-    const lbl = document.getElementById(`nl-${id}`);
-    if(lbl) lbl.style.color = 'var(--accent-bright)';
-
-    data.find(d => d.id === id).relatedIds.forEach(rid => {
-      document.getElementById(`nb-${rid}`)?.classList.add('related');
+    canvas.addEventListener('pointermove', e => {
+      mouseX = e.clientX;
+      mouseY = canvas.height - e.clientY;
+      moveX += e.movementX;
+      moveY += e.movementY;
     });
 
-    /* Snap active node to top of orbit */
-    const idx = data.findIndex(d => d.id === id);
-    rotAngle = (270 - (idx / data.length) * 360 + 360) % 360;
-    updateAll();
-    showCard(id, pos(idx));
-  }
+    function resize() {
+      const dpr = Math.max(1, 0.5 * devicePixelRatio);
+      canvas.width  = window.innerWidth  * dpr;
+      canvas.height = window.innerHeight * dpr;
+      gl.viewport(0, 0, canvas.width, canvas.height);
+    }
+    window.addEventListener('resize', resize);
+    resize();
 
-  function reset(restoreRot = true) {
-    activeId = null;
-    data.forEach(d => {
-      document.getElementById(`nb-${d.id}`)?.classList.remove('active','related');
-      const l = document.getElementById(`nl-${d.id}`);
-      if(l) l.style.color = '';
-    });
-    wrap.querySelectorAll('.node-card').forEach(c => c.remove());
-    if(restoreRot) autoRot = true;
-  }
-
-  function showCard(id, p) {
-    wrap.querySelectorAll('.node-card').forEach(c => c.remove());
-    const item = data.find(d => d.id === id);
-    const sc = item.status === 'completed' ? 'nc-done' : item.status === 'in-progress' ? 'nc-wip' : 'nc-pend';
-    const st = item.status === 'completed' ? 'Completado' : item.status === 'in-progress' ? 'En progreso' : 'Pendiente';
-    const above = p.y > 30;
-
-    const card = document.createElement('div');
-    card.className = `node-card ${above ? 'card-above' : 'card-below'}`;
-    card.innerHTML = `
-      <div class="nc-head">
-        <span class="nc-status ${sc}">${st}</span>
-        <span class="nc-date">${item.date}</span>
-      </div>
-      <div class="nc-title">${item.title}</div>
-      <div class="nc-desc">${item.content}</div>
-      <div class="nc-energy">
-        <div class="nc-elabel"><span>Madurez</span><span>${item.energy}%</span></div>
-        <div class="nc-bar"><div class="nc-fill" style="width:${item.energy}%"></div></div>
-      </div>`;
-    card.addEventListener('click', e => e.stopPropagation());
-    els[id].appendChild(card);
-  }
-
-  function updateAll() {
-    data.forEach((item, idx) => {
-      const p = pos(idx);
-      const el = els[item.id];
-      el.style.transform = `translate(${p.x}px,${p.y}px)`;
-      el.style.zIndex = activeId === item.id ? 200 : p.zi;
-      el.style.opacity = activeId === item.id ? 1 : p.op;
-    });
-  }
-
-  wrap.addEventListener('click', e => {
-    if(e.target === wrap || e.target.classList.contains('orbit-track')) reset();
-  });
-
-  (function loop(){
-    if(autoRot) rotAngle = (rotAngle + 0.22) % 360;
-    updateAll();
+    function loop(now) {
+      gl.clearColor(0,0,0,1);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.useProgram(prog);
+      gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+      gl.uniform2f(uRes, canvas.width, canvas.height);
+      gl.uniform1f(uTime, now * 1e-3);
+      gl.uniform2f(uTouch, mouseX, mouseY);
+      gl.uniform2f(uMove, moveX, moveY);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      requestAnimationFrame(loop);
+    }
     requestAnimationFrame(loop);
   })();
-})();
 </script>
 </body>
 </html>
