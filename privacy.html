@@ -8,9 +8,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg:       #07080A;
-    --bg2:      #0E0F12;
-    --bg3:      #13141A;
+    --bg:       #111318;
+    --bg2:      #191C23;
+    --bg3:      #1E2129;
     --gold:     #C8A96E;
     --gold-dim: #8A6E3E;
     --white:    #F4F1EC;
@@ -74,21 +74,21 @@
     background: var(--bg);
   }
 
-  /* Animated SVG paths canvas */
-  #paths-canvas {
+  /* WebGL shader canvas */
+  #shader-canvas {
     position: absolute; inset: 0;
     width: 100%; height: 100%;
     pointer-events: none;
     z-index: 1;
   }
 
-  /* Subtle gradient vignette over paths */
+  /* Vignette over shader */
   .hero::after {
     content: '';
     position: absolute; inset: 0;
     background:
-      radial-gradient(ellipse 70% 60% at 100% 0%, rgba(200,169,110,0.06) 0%, transparent 60%),
-      linear-gradient(to bottom, var(--bg) 0%, transparent 30%, transparent 60%, var(--bg) 100%);
+      linear-gradient(to bottom, rgba(7,8,10,0.3) 0%, rgba(7,8,10,0.0) 30%, rgba(7,8,10,0.0) 55%, rgba(7,8,10,0.85) 100%),
+      radial-gradient(ellipse 60% 80% at 0% 100%, rgba(7,8,10,0.6) 0%, transparent 70%);
     z-index: 2; pointer-events: none;
   }
 
@@ -313,7 +313,7 @@
 
 <!-- HERO with animated paths -->
 <div class="hero">
-  <svg id="paths-canvas" viewBox="0 0 1440 700" preserveAspectRatio="xMidYMid slice" fill="none" xmlns="http://www.w3.org/2000/svg"></svg>
+  <canvas id="shader-canvas"></canvas>
 
   <div class="hero-content">
     <div class="hero-badge"><div class="hero-badge-dot"></div> Documento legal · Vinculante</div>
@@ -453,104 +453,141 @@
 </footer>
 
 <script>
-// ── ANIMATED BACKGROUND PATHS (ported from framer-motion React component)
+// ── WEBGL SHADER HERO (ported from background-paper-shaders.tsx)
 (function() {
-  const svg = document.getElementById('paths-canvas');
-  if (!svg) return;
+  const canvas = document.getElementById('shader-canvas');
+  if (!canvas) return;
+  const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
+  if (!gl) return;
 
-  const totalPaths = 36;
+  const isWebGL2 = !!canvas.getContext('webgl2');
+  const glslVersion = isWebGL2 ? '#version 300 es\n' : '';
+  const outDecl     = isWebGL2 ? 'out vec4 fragColor;\n' : '';
+  const fragOut     = isWebGL2 ? 'fragColor' : 'gl_FragColor';
 
-  function buildPathD(i, position) {
-    const p = position;
-    return `M${-380 - i*5*p} ${-189 + i*6}` +
-           `C${-380 - i*5*p} ${-189 + i*6} ` +
-           `${-312 - i*5*p} ${216 - i*6} ` +
-           `${152 - i*5*p} ${343 - i*6}` +
-           `C${616 - i*5*p} ${470 - i*6} ` +
-           `${684 - i*5*p} ${875 - i*6} ` +
-           `${684 - i*5*p} ${875 - i*6}`;
+  // ── Vertex shader (from background-paper-shaders.tsx)
+  const vertSrc = glslVersion + `
+precision highp float;
+${isWebGL2 ? 'in' : 'attribute'} vec2 a_position;
+${isWebGL2 ? 'out' : 'varying'} vec2 vUv;
+
+uniform float time;
+uniform float intensity;
+
+void main() {
+  vUv = a_position * 0.5 + 0.5;
+  vec2 pos = a_position;
+  pos.y += sin(pos.x * 10.0 + time) * 0.08 * intensity;
+  pos.x += cos(pos.y * 8.0  + time * 1.5) * 0.04 * intensity;
+  gl_Position = vec4(pos, 0.0, 1.0);
+}`;
+
+  // ── Fragment shader (from background-paper-shaders.tsx, gold+orange palette)
+  const fragSrc = glslVersion + `
+precision highp float;
+${outDecl}
+${isWebGL2 ? 'in' : 'varying'} vec2 vUv;
+
+uniform float time;
+uniform float intensity;
+uniform vec3  color1;   // gold
+uniform vec3  color2;   // orange
+uniform vec3  color3;   // deep amber accent
+
+void main() {
+  vec2 uv = vUv;
+
+  // Animated noise — identical to the tsx component
+  float noise  = sin(uv.x * 20.0 + time)        * cos(uv.y * 15.0 + time * 0.8);
+  noise += sin(uv.x * 35.0 - time * 2.0) * cos(uv.y * 25.0 + time * 1.2) * 0.5;
+  // Extra octave for richness
+  noise += sin(uv.x * 7.0  + time * 0.4) * cos(uv.y * 9.0  - time * 0.6) * 0.3;
+
+  // Mix gold → orange based on noise
+  vec3 col = mix(color1, color2, noise * 0.5 + 0.5);
+  // Occasional bright flare (white-hot highlight)
+  col = mix(col, color3, pow(abs(noise), 2.2) * intensity * 0.6);
+
+  // Glow: brighter at top-right
+  float glow = 1.0 - length((uv - vec2(0.75, 0.35)) * vec2(1.0, 1.4));
+  glow = clamp(pow(glow, 1.6), 0.0, 1.0);
+
+  // Radial vignette (dark edges)
+  float vig = 1.0 - length((uv - 0.5) * 1.6);
+  vig = clamp(vig, 0.0, 1.0);
+
+  float alpha = glow * vig * 0.92;
+  ${fragOut} = vec4(col * (glow * 0.5 + 0.5), alpha);
+}`;
+
+  function compileShader(type, src) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS))
+      console.error(gl.getShaderInfoLog(s));
+    return s;
   }
 
-  // Scale path coords (designed for 696×316 viewBox) into our 1440×700 canvas
-  const scaleX = 1440 / 696;
-  const scaleY = 700  / 316;
+  const prog = gl.createProgram();
+  gl.attachShader(prog, compileShader(gl.VERTEX_SHADER,   vertSrc));
+  gl.attachShader(prog, compileShader(gl.FRAGMENT_SHADER, fragSrc));
+  gl.linkProgram(prog);
 
-  function scaledPath(i, position) {
-    // Use raw coords — SVG viewBox handles the mapping
-    return buildPathD(i, position);
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER,
+    new Float32Array([-1,-1, 1,-1, -1,1, 1,1]),
+    gl.STATIC_DRAW);
+
+  const aPosLoc = gl.getAttribLocation(prog, 'a_position');
+  gl.enableVertexAttribArray(aPosLoc);
+  gl.vertexAttribPointer(aPosLoc, 2, gl.FLOAT, false, 0, 0);
+
+  // Uniforms
+  const uTime      = gl.getUniformLocation(prog, 'time');
+  const uIntensity = gl.getUniformLocation(prog, 'intensity');
+  const uColor1    = gl.getUniformLocation(prog, 'color1');
+  const uColor2    = gl.getUniformLocation(prog, 'color2');
+  const uColor3    = gl.getUniformLocation(prog, 'color3');
+
+  // Gold, orange, warm white — slightly brighter
+  const gold   = [0.87,  0.75,  0.52];   // lighter gold
+  const orange = [0.95,  0.52,  0.18];   // brighter orange
+  const bright = [1.0,   0.92,  0.70];   // warm highlight
+
+  gl.enable(gl.BLEND);
+  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+  function resize() {
+    const dpr = Math.max(1, 0.5 * devicePixelRatio);
+    canvas.width  = canvas.offsetWidth  * dpr;
+    canvas.height = canvas.offsetHeight * dpr;
+    gl.viewport(0, 0, canvas.width, canvas.height);
   }
+  window.addEventListener('resize', resize);
+  resize();
 
-  // Inject <style> for path animations
-  const style = document.createElement('style');
-  style.textContent = `
-    .bg-path {
-      fill: none;
-      stroke: rgba(200,169,110,VAR_OPACITY);
-      stroke-width: VAR_W;
-      stroke-dasharray: VAR_LEN VAR_LEN;
-      stroke-dashoffset: VAR_LEN;
-      animation: path-draw VAR_DUR linear infinite;
-    }
-    @keyframes path-draw {
-      0%   { stroke-dashoffset: VAR_LEN_NEG; opacity: 0.3; }
-      50%  { opacity: 0.7; }
-      100% { stroke-dashoffset: 0;           opacity: 0.3; }
-    }
-  `;
+  let start = performance.now();
+  function loop(now) {
+    const t = (now - start) * 0.001;
+    const intensity = 1.2 + Math.sin(t * 2.0) * 0.35;
 
-  // We can't use CSS vars inside the keyframe the same way, so we create individual rules per path
-  let styleText = '';
-  const positions = [1, -1];
+    gl.clearColor(0, 0, 0, 0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.useProgram(prog);
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
 
-  positions.forEach((pos, posIdx) => {
-    for (let i = 0; i < totalPaths; i++) {
-      const globalIdx = posIdx * totalPaths + i;
-      const opacity   = (0.05 + i * 0.018).toFixed(3);
-      const width     = (0.4 + i * 0.025).toFixed(2);
-      const dur       = (18 + (i % 7) * 2.5 + posIdx * 3).toFixed(1);
-      const delay     = -(i * 0.6 + posIdx * 9).toFixed(1);
-      const dashLen   = 3000;
+    gl.uniform1f(uTime,      t);
+    gl.uniform1f(uIntensity, intensity);
+    gl.uniform3fv(uColor1,   gold);
+    gl.uniform3fv(uColor2,   orange);
+    gl.uniform3fv(uColor3,   bright);
 
-      styleText += `
-        .bp-${globalIdx} {
-          fill: none;
-          stroke: rgba(200,169,110,${opacity});
-          stroke-width: ${width};
-          stroke-dasharray: ${dashLen};
-          stroke-dashoffset: ${dashLen};
-          opacity: 0;
-          animation: bp-anim-${globalIdx} ${dur}s linear ${delay}s infinite;
-        }
-        @keyframes bp-anim-${globalIdx} {
-          0%   { stroke-dashoffset: ${dashLen};  opacity: 0; }
-          10%  { opacity: ${opacity}; }
-          50%  { stroke-dashoffset: ${dashLen / 2}; opacity: ${Math.min(parseFloat(opacity) * 2, 0.5).toFixed(3)}; }
-          90%  { opacity: ${opacity}; }
-          100% { stroke-dashoffset: 0; opacity: 0; }
-        }
-      `;
-    }
-  });
-
-  const styleEl = document.createElement('style');
-  styleEl.textContent = styleText;
-  document.head.appendChild(styleEl);
-
-  // Set viewBox to match original component's coordinate space
-  svg.setAttribute('viewBox', '-400 -200 1500 1100');
-
-  // Render paths
-  positions.forEach((pos, posIdx) => {
-    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-    for (let i = 0; i < totalPaths; i++) {
-      const globalIdx = posIdx * totalPaths + i;
-      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-      path.setAttribute('d', buildPathD(i, pos));
-      path.setAttribute('class', `bp-${globalIdx}`);
-      g.appendChild(path);
-    }
-    svg.appendChild(g);
-  });
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
 })();
 
 // ── SCROLL REVEAL
