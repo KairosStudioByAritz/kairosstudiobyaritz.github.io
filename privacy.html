@@ -1,419 +1,568 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Política de Privacidad — Kairos Studio</title>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --navy: #1A237E;
-      --mid: #3949AB;
-      --teal: #84CFBB;
-      --white: #F8F9FF;
-      --gray: #8A8FA8;
-      --card-bg: #F0F2FF;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Política de Privacidad — Kairos Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:       #07080A;
+    --bg2:      #0E0F12;
+    --bg3:      #13141A;
+    --gold:     #C8A96E;
+    --gold-dim: #8A6E3E;
+    --white:    #F4F1EC;
+    --white-dim:#9A968F;
+    --border:   rgba(200,169,110,0.15);
+  }
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior: smooth; }
 
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--white);
-      color: #1a1a2e;
-    }
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
 
-    nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 20px 48px;
-      background: rgba(248,249,255,0.85);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(26,35,126,0.08);
-    }
+  /* ── NAV ── */
+  nav {
+    position: fixed; top:0; left:0; right:0; z-index:100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 24px 60px;
+    background: rgba(7,8,10,0.7);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 1rem;
+    letter-spacing: 0.1em; color: var(--white);
+    text-decoration: none;
+    display: flex; align-items: center; gap: 9px;
+  }
+  .nav-logo-dot {
+    width: 7px; height: 7px;
+    background: var(--gold); border-radius: 50%;
+    animation: pulse-dot 2.5s ease-in-out infinite;
+  }
+  @keyframes pulse-dot {
+    0%,100%{opacity:1;transform:scale(1)}
+    50%{opacity:.4;transform:scale(.6)}
+  }
+  .nav-back {
+    font-size: 0.8rem; letter-spacing: 0.08em;
+    color: var(--white-dim); text-decoration: none;
+    display: flex; align-items: center; gap: 8px;
+    transition: color .3s, gap .3s;
+    text-transform: uppercase;
+  }
+  .nav-back:hover { color: var(--gold); gap: 14px; }
 
-    .nav-logo {
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 20px;
-      color: var(--navy);
-      text-decoration: none;
-      letter-spacing: -0.5px;
-    }
+  /* ── HERO ── */
+  .hero {
+    min-height: 70vh;
+    display: flex; flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 60px 80px;
+    position: relative; overflow: hidden;
+    background: var(--bg);
+  }
 
-    .nav-logo span { color: var(--teal); }
+  /* Animated SVG paths canvas */
+  #paths-canvas {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
 
-    .nav-back {
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--gray);
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: color 0.2s;
-    }
+  /* Subtle gradient vignette over paths */
+  .hero::after {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 70% 60% at 100% 0%, rgba(200,169,110,0.06) 0%, transparent 60%),
+      linear-gradient(to bottom, var(--bg) 0%, transparent 30%, transparent 60%, var(--bg) 100%);
+    z-index: 2; pointer-events: none;
+  }
 
-    .nav-back:hover { color: var(--navy); }
+  .hero-content { position: relative; z-index: 10; max-width: 800px; }
 
-    /* HERO */
-    .hero {
-      padding: 140px 48px 80px;
-      background: var(--navy);
-      position: relative;
-      overflow: hidden;
-    }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.68rem; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid var(--border);
+    padding: 7px 18px; border-radius: 2px;
+    margin-bottom: 32px;
+    opacity: 0; animation: fade-up .7s .3s forwards;
+  }
+  .hero-badge-dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--gold);
+    animation: pulse-dot 2s infinite;
+  }
 
-    .hero::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(ellipse 50% 80% at 90% 50%, rgba(132,207,187,0.1) 0%, transparent 70%),
-        radial-gradient(ellipse 30% 50% at 10% 20%, rgba(57,73,171,0.3) 0%, transparent 60%);
-    }
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3rem, 7vw, 6.5rem);
+    font-weight: 300; line-height: 1.0;
+    letter-spacing: -0.02em;
+    margin-bottom: 28px;
+    opacity: 0; animation: fade-up .9s .5s cubic-bezier(.16,1,.3,1) forwards;
+  }
+  .hero-title em { font-style: italic; color: var(--gold); }
 
-    .hero-grid {
-      position: absolute;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
-      background-size: 60px 60px;
-    }
+  .hero-meta {
+    display: flex; align-items: center; gap: 28px;
+    flex-wrap: wrap;
+    opacity: 0; animation: fade-up .7s .8s forwards;
+  }
+  .hero-meta-item {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 0.78rem; letter-spacing: 0.06em;
+    color: var(--white-dim);
+  }
+  .hero-meta-item::before {
+    content: ''; display: inline-block;
+    width: 18px; height: 1px; background: var(--gold-dim);
+  }
 
-    .hero-inner {
-      position: relative;
-      z-index: 1;
-      max-width: 760px;
-    }
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
 
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(132,207,187,0.15);
-      border: 1px solid rgba(132,207,187,0.3);
-      padding: 6px 16px;
-      border-radius: 50px;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--teal);
-      margin-bottom: 24px;
-    }
+  /* ── SUMMARY STRIP ── */
+  .summary-strip {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 36px 60px;
+    display: flex; align-items: flex-start; gap: 20px;
+  }
+  .summary-icon {
+    font-size: 1.4rem; flex-shrink: 0; padding-top: 2px;
+  }
+  .summary-text {
+    font-size: 0.9rem; color: var(--white-dim); line-height: 1.8;
+  }
+  .summary-text strong { color: var(--gold); font-weight: 500; }
 
-    h1 {
-      font-family: 'Syne', sans-serif;
-      font-size: clamp(36px, 5vw, 56px);
-      font-weight: 800;
-      letter-spacing: -1.5px;
-      color: #fff;
-      margin-bottom: 16px;
-      line-height: 1.1;
-    }
+  /* ── CONTENT ── */
+  .content {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 90px 60px 120px;
+  }
 
-    .hero-sub {
-      font-size: 16px;
-      color: rgba(255,255,255,0.5);
-      font-weight: 300;
-    }
+  .section-block {
+    margin-bottom: 64px;
+    opacity: 0; transform: translateY(22px);
+    transition: opacity .6s ease, transform .6s ease;
+  }
+  .section-block.visible { opacity: 1; transform: none; }
 
-    /* CONTENT */
-    .content {
-      max-width: 760px;
-      margin: 0 auto;
-      padding: 72px 48px 100px;
-    }
+  .section-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.75rem; font-style: italic;
+    letter-spacing: 0.15em; color: var(--gold-dim);
+    margin-bottom: 10px;
+  }
 
-    .section-block {
-      margin-bottom: 48px;
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.5s ease, transform 0.5s ease;
-    }
+  h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem; font-weight: 700;
+    letter-spacing: 0.04em; color: var(--white);
+    margin-bottom: 20px;
+    text-transform: uppercase;
+  }
 
-    .section-block.visible {
-      opacity: 1;
-      transform: none;
-    }
+  p {
+    font-size: 0.93rem; line-height: 1.9;
+    color: var(--white-dim); margin-bottom: 14px;
+    font-weight: 300;
+  }
+  p:last-child { margin-bottom: 0; }
+  p strong { color: var(--white); font-weight: 500; }
+  p a { color: var(--gold); text-decoration: none; border-bottom: 1px solid var(--border); }
+  p a:hover { border-color: var(--gold); }
 
-    .section-num {
-      font-family: 'Syne', sans-serif;
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--teal);
-      margin-bottom: 8px;
-    }
+  ul { list-style: none; margin: 20px 0; }
+  ul li {
+    font-size: 0.9rem; line-height: 1.8;
+    color: var(--white-dim); font-weight: 300;
+    padding: 12px 0 12px 22px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    position: relative;
+  }
+  ul li:last-child { border-bottom: none; }
+  ul li::before {
+    content: '';
+    position: absolute; left: 0; top: 50%;
+    transform: translateY(-50%);
+    width: 5px; height: 5px;
+    border-radius: 50%; background: var(--gold-dim);
+  }
+  ul li strong { color: var(--white); font-weight: 500; }
 
-    h2 {
-      font-family: 'Syne', sans-serif;
-      font-size: 22px;
-      font-weight: 700;
-      color: var(--navy);
-      margin-bottom: 16px;
-      letter-spacing: -0.5px;
-    }
+  .highlight-box {
+    background: rgba(200,169,110,0.05);
+    border: 1px solid var(--border);
+    border-left: 2px solid var(--gold);
+    padding: 20px 26px;
+    margin: 24px 0;
+  }
+  .highlight-box p {
+    margin: 0; font-size: 0.88rem;
+    color: var(--white-dim);
+  }
+  .highlight-box p strong { color: var(--gold); }
 
-    p {
-      font-size: 16px;
-      line-height: 1.8;
-      color: #444;
-      font-weight: 300;
-      margin-bottom: 12px;
-    }
+  .divider {
+    height: 1px;
+    background: linear-gradient(to right, var(--gold-dim), transparent);
+    opacity: 0.2;
+    margin: 0 0 64px;
+  }
 
-    ul {
-      list-style: none;
-      margin: 16px 0;
-    }
+  /* ── CONTACT BOX ── */
+  .contact-box {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 52px;
+    text-align: center;
+    margin-top: 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .contact-box::before {
+    content: '';
+    position: absolute; top: -1px; left: 40px; right: 40px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold), transparent);
+  }
+  .contact-box-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem; font-weight: 300;
+    margin-bottom: 12px; color: var(--white);
+  }
+  .contact-box-sub {
+    color: var(--white-dim); font-size: 0.88rem;
+    margin-bottom: 32px; line-height: 1.7;
+  }
+  .contact-link {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.78rem; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--bg); background: var(--gold);
+    padding: 14px 30px; border-radius: 2px;
+    text-decoration: none;
+    transition: transform .3s, box-shadow .3s;
+  }
+  .contact-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 36px rgba(200,169,110,.25);
+  }
 
-    ul li {
-      font-size: 15px;
-      line-height: 1.7;
-      color: #444;
-      font-weight: 300;
-      padding: 8px 0 8px 20px;
-      border-bottom: 1px solid rgba(26,35,126,0.06);
-      position: relative;
-    }
+  /* ── FOOTER ── */
+  footer {
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    padding: 32px 60px;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 12px;
+  }
+  .footer-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 0.9rem;
+    letter-spacing: 0.1em; color: var(--white-dim);
+  }
+  .footer-copy {
+    font-size: 0.72rem; color: var(--white-dim);
+    opacity: 0.4; letter-spacing: 0.05em;
+  }
 
-    ul li:last-child { border-bottom: none; }
-
-    ul li::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--teal);
-    }
-
-    .highlight-box {
-      background: var(--card-bg);
-      border-left: 3px solid var(--teal);
-      border-radius: 0 12px 12px 0;
-      padding: 20px 24px;
-      margin: 24px 0;
-    }
-
-    .highlight-box p {
-      margin: 0;
-      font-size: 15px;
-      color: var(--navy);
-      font-weight: 400;
-    }
-
-    .divider {
-      height: 1px;
-      background: rgba(26,35,126,0.08);
-      margin: 48px 0;
-    }
-
-    /* CONTACT FOOTER */
-    .contact-box {
-      background: var(--navy);
-      border-radius: 20px;
-      padding: 32px;
-      text-align: center;
-      margin-top: 64px;
-    }
-
-    .contact-box h3 {
-      font-family: 'Syne', sans-serif;
-      font-size: 20px;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 8px;
-    }
-
-    .contact-box p {
-      color: rgba(255,255,255,0.5);
-      margin-bottom: 20px;
-      font-size: 14px;
-    }
-
-    .contact-box a {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--teal);
-      color: var(--navy);
-      font-weight: 600;
-      font-size: 14px;
-      padding: 12px 24px;
-      border-radius: 50px;
-      text-decoration: none;
-      transition: opacity 0.2s;
-    }
-
-    .contact-box a:hover { opacity: 0.85; }
-
-    footer {
-      background: var(--navy);
-      color: rgba(255,255,255,0.4);
-      text-align: center;
-      padding: 24px 48px;
-      font-size: 13px;
-    }
-
-    footer strong { color: rgba(255,255,255,0.8); }
-
-    @media (max-width: 600px) {
-      nav { padding: 16px 24px; }
-      .hero { padding: 120px 24px 60px; }
-      .content { padding: 48px 24px 80px; }
-    }
-  </style>
+  @media (max-width: 768px) {
+    nav { padding: 18px 24px; }
+    .hero { padding: 0 24px 60px; min-height: 60vh; }
+    .summary-strip { padding: 28px 24px; }
+    .content { padding: 60px 24px 80px; }
+    footer { padding: 28px 24px; }
+  }
+</style>
 </head>
 <body>
 
-  <nav>
-    <a href="index.html" class="nav-logo">Kairos<span>Studio</span></a>
-    <a href="index.html" class="nav-back">← Volver al inicio</a>
-  </nav>
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-dot"></div>
+    KAIROS STUDIO
+  </a>
+  <a href="index.html" class="nav-back">← Volver al inicio</a>
+</nav>
 
-  <div class="hero">
-    <div class="hero-grid"></div>
-    <div class="hero-inner">
-      <div class="hero-badge">Documento legal</div>
-      <h1>Política de<br />Privacidad</h1>
-      <p class="hero-sub">Última actualización: mayo de 2026 · Aplicable a OpoRecord y todas las apps de Kairos Studio</p>
+<!-- HERO with animated paths -->
+<div class="hero">
+  <svg id="paths-canvas" viewBox="0 0 1440 700" preserveAspectRatio="xMidYMid slice" fill="none" xmlns="http://www.w3.org/2000/svg"></svg>
+
+  <div class="hero-content">
+    <div class="hero-badge"><div class="hero-badge-dot"></div> Documento legal · Vinculante</div>
+    <h1 class="hero-title">
+      Política de<br><em>Privacidad</em>
+    </h1>
+    <div class="hero-meta">
+      <div class="hero-meta-item">Última actualización: mayo de 2026</div>
+      <div class="hero-meta-item">Aplicable a OpoRecord y todas las apps de Kairos Studio</div>
+    </div>
+  </div>
+</div>
+
+<!-- SUMMARY STRIP -->
+<div class="summary-strip">
+  <div class="summary-icon">🔒</div>
+  <div class="summary-text">
+    <strong>Resumen ejecutivo:</strong> OpoRecord no recoge, almacena ni comparte ningún dato personal en servidores externos.
+    Toda la información reside exclusivamente en tu dispositivo. No hay analíticas, no hay publicidad, no hay rastreo.
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <div class="section-block">
+    <div class="section-num">Artículo 01</div>
+    <h2>Información general</h2>
+    <p>Kairos Studio es un estudio de desarrollo independiente con sede en España. Esta política de privacidad describe cómo tratamos la información en nuestras aplicaciones móviles, en particular OpoRecord.</p>
+    <p>Al instalar y usar nuestras apps, aceptas las prácticas descritas en este documento. Si no estás de acuerdo con alguno de los términos, te pedimos que desinstales la aplicación.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section-block">
+    <div class="section-num">Artículo 02</div>
+    <h2>Datos que no recopilamos</h2>
+    <p>Nuestras aplicaciones <strong>no recogen</strong> ninguno de los siguientes datos en ningún momento:</p>
+    <ul>
+      <li>Nombre, dirección de correo electrónico o cualquier dato de identificación personal</li>
+      <li>Ubicación geográfica del dispositivo</li>
+      <li>Datos de uso o analíticas enviadas a servidores externos</li>
+      <li>Información de pago o financiera de ningún tipo</li>
+      <li>Acceso a contactos, galería fotográfica, cámara o micrófono</li>
+      <li>Identificadores de dispositivo para publicidad o rastreo cruzado</li>
+    </ul>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section-block">
+    <div class="section-num">Artículo 03</div>
+    <h2>Datos almacenados localmente</h2>
+    <p>OpoRecord guarda la siguiente información <strong>únicamente en tu dispositivo</strong>, usando el almacenamiento local de Android (SharedPreferences):</p>
+    <ul>
+      <li>Tu nombre (opcional, solo para personalizar mensajes dentro de la app)</li>
+      <li>Oposición seleccionada, sexo y fecha de nacimiento</li>
+      <li>Registros de marcas físicas, tests de temario y psicotécnicos</li>
+      <li>Configuración de la app (tema visual, hora de recordatorio)</li>
+    </ul>
+    <div class="highlight-box">
+      <p><strong>Nota importante:</strong> estos datos nunca salen de tu dispositivo. Kairos Studio no tiene acceso a ellos en ningún momento, bajo ninguna circunstancia.</p>
     </div>
   </div>
 
-  <div class="content">
+  <div class="divider"></div>
 
-    <div class="section-block">
-      <div class="highlight-box">
-        <p>📋 <strong>Resumen:</strong> OpoRecord no recoge, almacena ni comparte ningún dato personal en servidores externos. Toda la información se guarda exclusivamente en tu dispositivo.</p>
-      </div>
-    </div>
-
-    <div class="section-block">
-      <div class="section-num">01</div>
-      <h2>Información general</h2>
-      <p>Kairos Studio es un estudio de desarrollo independiente con sede en España. Esta política de privacidad describe cómo tratamos la información en nuestras aplicaciones móviles, en particular OpoRecord.</p>
-      <p>Al usar nuestras apps, aceptas las prácticas descritas en este documento.</p>
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="section-block">
-      <div class="section-num">02</div>
-      <h2>Datos que NO recopilamos</h2>
-      <p>Nuestras aplicaciones <strong>no recogen</strong> ninguno de los siguientes datos:</p>
-      <ul>
-        <li>Nombre, dirección de correo electrónico o cualquier dato de identificación personal</li>
-        <li>Ubicación geográfica</li>
-        <li>Datos de uso o analíticas enviadas a servidores externos</li>
-        <li>Información de pago o financiera</li>
-        <li>Contactos, fotos, cámara ni micrófono</li>
-        <li>Identificadores de dispositivo para publicidad</li>
-      </ul>
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="section-block">
-      <div class="section-num">03</div>
-      <h2>Datos almacenados localmente</h2>
-      <p>OpoRecord guarda la siguiente información <strong>únicamente en tu dispositivo</strong>, usando el almacenamiento local de Android (SharedPreferences):</p>
-      <ul>
-        <li>Tu nombre (opcional, solo para personalizar mensajes en la app)</li>
-        <li>Oposición seleccionada, sexo y fecha de nacimiento</li>
-        <li>Registros de marcas físicas, tests de temario y psicotécnicos</li>
-        <li>Configuración de la app (tema, hora de recordatorio)</li>
-      </ul>
-      <div class="highlight-box">
-        <p>🔒 Estos datos nunca salen de tu dispositivo. No tenemos acceso a ellos en ningún momento.</p>
-      </div>
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="section-block">
-      <div class="section-num">04</div>
-      <h2>Permisos de la aplicación</h2>
-      <p>OpoRecord solicita únicamente los permisos estrictamente necesarios:</p>
-      <ul>
-        <li><strong>Notificaciones:</strong> para enviarte recordatorios diarios opcionales que tú configuras</li>
-        <li><strong>Almacenamiento:</strong> para guardar tus registros localmente en el dispositivo</li>
-      </ul>
-      <p>No solicitamos acceso a la cámara, micrófono, contactos, ubicación ni ningún otro permiso sensible.</p>
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="section-block">
-      <div class="section-num">05</div>
-      <h2>Servicios de terceros</h2>
-      <p>OpoRecord no integra servicios de analíticas, publicidad, redes sociales ni rastreo de ningún tipo.</p>
-      <p>La app se distribuye a través de Google Play Store, sujeta a la <a href="https://policies.google.com/privacy" target="_blank" style="color:var(--mid)">política de privacidad de Google</a>.</p>
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="section-block">
-      <div class="section-num">06</div>
-      <h2>Menores de edad</h2>
-      <p>Nuestras apps no están dirigidas específicamente a menores de 13 años. No recopilamos intencionadamente datos de menores. Si eres padre o tutor y crees que tu hijo ha proporcionado información personal, contáctanos y la eliminaremos inmediatamente.</p>
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="section-block">
-      <div class="section-num">07</div>
-      <h2>Tus derechos</h2>
-      <p>Como todos los datos se almacenan localmente en tu dispositivo, tienes control total sobre ellos en todo momento:</p>
-      <ul>
-        <li>Puedes eliminar cualquier registro directamente desde la app</li>
-        <li>Puedes desinstalar la app para eliminar todos los datos de tu dispositivo</li>
-        <li>No necesitas contactarnos para ejercer tu derecho al olvido</li>
-      </ul>
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="section-block">
-      <div class="section-num">08</div>
-      <h2>Cambios en esta política</h2>
-      <p>Podemos actualizar esta política de privacidad ocasionalmente. Cualquier cambio se publicará en esta página con la fecha de actualización. Te recomendamos revisarla periódicamente.</p>
-    </div>
-
-    <div class="section-block">
-      <div class="contact-box">
-        <h3>¿Tienes alguna pregunta?</h3>
-        <p>Estamos disponibles para resolver cualquier duda sobre privacidad o el tratamiento de tus datos.</p>
-        <a href="mailto:aritz.codes@gmail.com">✉️ aritz.codes@gmail.com</a>
-      </div>
-    </div>
-
+  <div class="section-block">
+    <div class="section-num">Artículo 04</div>
+    <h2>Permisos de la aplicación</h2>
+    <p>OpoRecord solicita únicamente los permisos estrictamente necesarios para su funcionamiento:</p>
+    <ul>
+      <li><strong>Notificaciones:</strong> para enviarte recordatorios diarios opcionales que configuras tú mismo</li>
+      <li><strong>Almacenamiento local:</strong> para guardar tus registros en el dispositivo</li>
+    </ul>
+    <p>No solicitamos acceso a cámara, micrófono, contactos, ubicación ni ningún otro permiso de carácter sensible.</p>
   </div>
 
-  <footer>
-    <strong>Kairos Studio</strong> · Política de Privacidad · © 2026
-  </footer>
+  <div class="divider"></div>
 
-  <script>
-    const blocks = document.querySelectorAll('.section-block');
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry, i) => {
-        if (entry.isIntersecting) {
-          setTimeout(() => entry.target.classList.add('visible'), i * 60);
-          observer.unobserve(entry.target);
+  <div class="section-block">
+    <div class="section-num">Artículo 05</div>
+    <h2>Servicios de terceros</h2>
+    <p>OpoRecord <strong>no integra</strong> servicios de analíticas, publicidad, redes sociales ni rastreo de comportamiento de ningún tipo.</p>
+    <p>La aplicación se distribuye a través de Google Play Store, plataforma sujeta a la <a href="https://policies.google.com/privacy" target="_blank">política de privacidad de Google LLC</a>. Dicha política es independiente de la presente.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section-block">
+    <div class="section-num">Artículo 06</div>
+    <h2>Menores de edad</h2>
+    <p>Nuestras aplicaciones no están dirigidas específicamente a menores de 13 años y no recopilamos intencionadamente información de dichos usuarios.</p>
+    <p>Si eres padre, madre o tutor legal y tienes indicios de que un menor ha facilitado datos personales a través de nuestras apps, contacta con nosotros de inmediato. Tomaremos las medidas oportunas para eliminar dicha información.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section-block">
+    <div class="section-num">Artículo 07</div>
+    <h2>Tus derechos</h2>
+    <p>Dado que todos los datos se almacenan localmente en tu dispositivo, tienes control total y exclusivo sobre ellos en todo momento:</p>
+    <ul>
+      <li>Puedes eliminar cualquier registro directamente desde la interfaz de la app</li>
+      <li>Puedes desinstalar la app para eliminar completamente todos los datos de tu dispositivo</li>
+      <li>No necesitas contactarnos para ejercer tu derecho de supresión (derecho al olvido)</li>
+    </ul>
+    <div class="highlight-box">
+      <p><strong>RGPD:</strong> En virtud del Reglamento (UE) 2016/679, tienes derecho de acceso, rectificación, supresión, limitación del tratamiento y portabilidad. Dado que no almacenamos tus datos en ningún servidor, el ejercicio de estos derechos es íntegramente local.</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section-block">
+    <div class="section-num">Artículo 08</div>
+    <h2>Modificaciones de esta política</h2>
+    <p>Kairos Studio se reserva el derecho de actualizar esta política de privacidad para reflejar cambios en nuestras prácticas o en la legislación aplicable. Cualquier modificación sustancial será comunicada mediante un aviso en la aplicación o en esta misma página, indicando la fecha de actualización.</p>
+    <p>Te recomendamos revisar periódicamente este documento. El uso continuado de la aplicación tras una actualización implica la aceptación de los nuevos términos.</p>
+  </div>
+
+  <!-- CONTACT -->
+  <div class="section-block">
+    <div class="contact-box">
+      <div class="contact-box-title">¿Tienes alguna pregunta?</div>
+      <p class="contact-box-sub">Si tienes dudas sobre esta política o sobre el tratamiento de tus datos,<br>estamos disponibles para responderte.</p>
+      <a href="mailto:aritz.codes@gmail.com" class="contact-link">✉ aritz.codes@gmail.com</a>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">KAIROS STUDIO</div>
+  <div class="footer-copy">Política de Privacidad · © 2026 · Todos los derechos reservados</div>
+</footer>
+
+<script>
+// ── ANIMATED BACKGROUND PATHS (ported from framer-motion React component)
+(function() {
+  const svg = document.getElementById('paths-canvas');
+  if (!svg) return;
+
+  const totalPaths = 36;
+
+  function buildPathD(i, position) {
+    const p = position;
+    return `M${-380 - i*5*p} ${-189 + i*6}` +
+           `C${-380 - i*5*p} ${-189 + i*6} ` +
+           `${-312 - i*5*p} ${216 - i*6} ` +
+           `${152 - i*5*p} ${343 - i*6}` +
+           `C${616 - i*5*p} ${470 - i*6} ` +
+           `${684 - i*5*p} ${875 - i*6} ` +
+           `${684 - i*5*p} ${875 - i*6}`;
+  }
+
+  // Scale path coords (designed for 696×316 viewBox) into our 1440×700 canvas
+  const scaleX = 1440 / 696;
+  const scaleY = 700  / 316;
+
+  function scaledPath(i, position) {
+    // Use raw coords — SVG viewBox handles the mapping
+    return buildPathD(i, position);
+  }
+
+  // Inject <style> for path animations
+  const style = document.createElement('style');
+  style.textContent = `
+    .bg-path {
+      fill: none;
+      stroke: rgba(200,169,110,VAR_OPACITY);
+      stroke-width: VAR_W;
+      stroke-dasharray: VAR_LEN VAR_LEN;
+      stroke-dashoffset: VAR_LEN;
+      animation: path-draw VAR_DUR linear infinite;
+    }
+    @keyframes path-draw {
+      0%   { stroke-dashoffset: VAR_LEN_NEG; opacity: 0.3; }
+      50%  { opacity: 0.7; }
+      100% { stroke-dashoffset: 0;           opacity: 0.3; }
+    }
+  `;
+
+  // We can't use CSS vars inside the keyframe the same way, so we create individual rules per path
+  let styleText = '';
+  const positions = [1, -1];
+
+  positions.forEach((pos, posIdx) => {
+    for (let i = 0; i < totalPaths; i++) {
+      const globalIdx = posIdx * totalPaths + i;
+      const opacity   = (0.05 + i * 0.018).toFixed(3);
+      const width     = (0.4 + i * 0.025).toFixed(2);
+      const dur       = (18 + (i % 7) * 2.5 + posIdx * 3).toFixed(1);
+      const delay     = -(i * 0.6 + posIdx * 9).toFixed(1);
+      const dashLen   = 3000;
+
+      styleText += `
+        .bp-${globalIdx} {
+          fill: none;
+          stroke: rgba(200,169,110,${opacity});
+          stroke-width: ${width};
+          stroke-dasharray: ${dashLen};
+          stroke-dashoffset: ${dashLen};
+          opacity: 0;
+          animation: bp-anim-${globalIdx} ${dur}s linear ${delay}s infinite;
         }
-      });
-    }, { threshold: 0.1 });
-    blocks.forEach(el => observer.observe(el));
-  </script>
+        @keyframes bp-anim-${globalIdx} {
+          0%   { stroke-dashoffset: ${dashLen};  opacity: 0; }
+          10%  { opacity: ${opacity}; }
+          50%  { stroke-dashoffset: ${dashLen / 2}; opacity: ${Math.min(parseFloat(opacity) * 2, 0.5).toFixed(3)}; }
+          90%  { opacity: ${opacity}; }
+          100% { stroke-dashoffset: 0; opacity: 0; }
+        }
+      `;
+    }
+  });
 
+  const styleEl = document.createElement('style');
+  styleEl.textContent = styleText;
+  document.head.appendChild(styleEl);
+
+  // Set viewBox to match original component's coordinate space
+  svg.setAttribute('viewBox', '-400 -200 1500 1100');
+
+  // Render paths
+  positions.forEach((pos, posIdx) => {
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    for (let i = 0; i < totalPaths; i++) {
+      const globalIdx = posIdx * totalPaths + i;
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', buildPathD(i, pos));
+      path.setAttribute('class', `bp-${globalIdx}`);
+      g.appendChild(path);
+    }
+    svg.appendChild(g);
+  });
+})();
+
+// ── SCROLL REVEAL
+const observer = new IntersectionObserver(entries => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('visible'), i * 60);
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.section-block').forEach(el => observer.observe(el));
+</script>
 </body>
 </html>
