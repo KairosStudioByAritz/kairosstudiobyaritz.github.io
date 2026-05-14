@@ -74,7 +74,6 @@
     background: var(--bg);
   }
 
-  /* WebGL shader canvas */
   #shader-canvas {
     position: absolute; inset: 0;
     width: 100%; height: 100%;
@@ -82,7 +81,6 @@
     z-index: 1;
   }
 
-  /* Vignette over shader */
   .hero::after {
     content: '';
     position: absolute; inset: 0;
@@ -226,6 +224,33 @@
   }
   .highlight-box p strong { color: var(--gold); }
 
+  /* App type cards */
+  .app-type-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 16px; margin: 24px 0;
+  }
+  .app-type-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 24px 22px;
+  }
+  .app-type-card-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.75rem; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 10px;
+  }
+  .app-type-card p {
+    font-size: 0.84rem; margin: 0; color: var(--white-dim);
+  }
+  .app-type-card a {
+    color: var(--gold); font-size: 0.78rem;
+    text-decoration: none; border-bottom: 1px solid var(--border);
+    display: inline-block; margin-top: 10px;
+    transition: border-color .3s;
+  }
+  .app-type-card a:hover { border-color: var(--gold); }
+
   .divider {
     height: 1px;
     background: linear-gradient(to right, var(--gold-dim), transparent);
@@ -297,6 +322,7 @@
     .summary-strip { padding: 28px 24px; }
     .content { padding: 60px 24px 80px; }
     footer { padding: 28px 24px; }
+    .app-type-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -311,7 +337,7 @@
   <a href="index.html" class="nav-back">← Volver al inicio</a>
 </nav>
 
-<!-- HERO with animated paths -->
+<!-- HERO -->
 <div class="hero">
   <canvas id="shader-canvas"></canvas>
 
@@ -322,7 +348,7 @@
     </h1>
     <div class="hero-meta">
       <div class="hero-meta-item">Última actualización: mayo de 2026</div>
-      <div class="hero-meta-item">Aplicable a OpoRecord y todas las apps de Kairos Studio</div>
+      <div class="hero-meta-item">Aplicable a todas las apps de Kairos Studio</div>
     </div>
   </div>
 </div>
@@ -331,8 +357,7 @@
 <div class="summary-strip">
   <div class="summary-icon">🔒</div>
   <div class="summary-text">
-    <strong>Resumen ejecutivo:</strong> OpoRecord no recoge, almacena ni comparte ningún dato personal en servidores externos.
-    Toda la información reside exclusivamente en tu dispositivo. No hay analíticas, no hay publicidad, no hay rastreo.
+    <strong>Resumen ejecutivo:</strong> En Kairos Studio nunca vendemos datos, nunca mostramos publicidad personalizada y nunca rastreamos tu ubicación. Según la app que uses, los datos pueden quedarse solo en tu dispositivo o almacenarse en servidores seguros dentro de la Unión Europea. Cada app tiene su propia política de privacidad con el detalle completo.
   </div>
 </div>
 
@@ -342,40 +367,49 @@
   <div class="section-block">
     <div class="section-num">Artículo 01</div>
     <h2>Información general</h2>
-    <p>Kairos Studio es un estudio de desarrollo independiente con sede en España. Esta política de privacidad describe cómo tratamos la información en nuestras aplicaciones móviles, en particular OpoRecord.</p>
-    <p>Al instalar y usar nuestras apps, aceptas las prácticas descritas en este documento. Si no estás de acuerdo con alguno de los términos, te pedimos que desinstales la aplicación.</p>
+    <p>Kairos Studio es un estudio de desarrollo independiente con sede en España. Esta política de privacidad establece los principios generales que rigen el tratamiento de datos en todas nuestras aplicaciones móviles.</p>
+    <p>Nuestro catálogo incluye dos tipos de aplicaciones con arquitecturas técnicas distintas: <strong>apps sin servidor</strong>, donde toda la información reside exclusivamente en tu dispositivo, y <strong>apps con cuenta de usuario</strong>, que almacenan datos en la nube para ofrecer funciones como sincronización y hogar compartido. Cada tipo de app lleva asociada su propia política de privacidad específica.</p>
+    <p>Al instalar y usar cualquiera de nuestras apps, aceptas las prácticas descritas en este documento y en la política específica de la aplicación correspondiente.</p>
+
+    <div class="app-type-grid">
+      <div class="app-type-card">
+        <div class="app-type-card-title">📱 Apps sin servidor</div>
+        <p>Toda la información se guarda exclusivamente en tu dispositivo. Kairos Studio no tiene acceso a ningún dato tuyo.</p>
+        <a href="oporecord-privacy.html">OpoRecord · Ver política →</a>
+      </div>
+      <div class="app-type-card">
+        <div class="app-type-card-title">☁️ Apps con cuenta</div>
+        <p>Requieren registro. Los datos se almacenan en servidores seguros dentro de la Unión Europea (Supabase).</p>
+        <a href="pawly-privacy.html">Pawly · Ver política →</a>
+      </div>
+    </div>
   </div>
 
   <div class="divider"></div>
 
   <div class="section-block">
     <div class="section-num">Artículo 02</div>
-    <h2>Datos que no recopilamos</h2>
-    <p>Nuestras aplicaciones <strong>no recogen</strong> ninguno de los siguientes datos en ningún momento:</p>
-    <ul>
-      <li>Nombre, dirección de correo electrónico o cualquier dato de identificación personal</li>
-      <li>Ubicación geográfica del dispositivo</li>
-      <li>Datos de uso o analíticas enviadas a servidores externos</li>
-      <li>Información de pago o financiera de ningún tipo</li>
-      <li>Acceso a contactos, galería fotográfica, cámara o micrófono</li>
-      <li>Identificadores de dispositivo para publicidad o rastreo cruzado</li>
-    </ul>
+    <h2>Qué datos podemos recopilar</h2>
+    <p>Los datos que recopilamos dependen directamente de la app que estés usando. Como principio general, <strong>solo recogemos lo estrictamente necesario</strong> para que cada aplicación funcione correctamente.</p>
+    <p><strong>Apps sin servidor (ej. OpoRecord):</strong> no recogen ningún dato personal. No se transmite ninguna información fuera de tu dispositivo en ningún momento.</p>
+    <p><strong>Apps con cuenta de usuario (ej. Pawly):</strong> requieren un correo electrónico y nombre para crear tu cuenta. Además almacenan los datos propios de cada aplicación (por ejemplo, en Pawly: información de tus mascotas, registros de cuidados y fotos de perfil). Toda esta información se guarda en servidores dentro de la Unión Europea.</p>
+    <div class="highlight-box">
+      <p><strong>Lo que nunca hacemos, en ninguna app:</strong> no vendemos datos a terceros, no creamos perfiles publicitarios, no rastreamos tu ubicación geográfica y no compartimos tu información con anunciantes de ningún tipo.</p>
+    </div>
   </div>
 
   <div class="divider"></div>
 
   <div class="section-block">
     <div class="section-num">Artículo 03</div>
-    <h2>Datos almacenados localmente</h2>
-    <p>OpoRecord guarda la siguiente información <strong>únicamente en tu dispositivo</strong>, usando el almacenamiento local de Android (SharedPreferences):</p>
+    <h2>Dónde se almacenan tus datos</h2>
+    <p>El lugar de almacenamiento varía según el tipo de app:</p>
     <ul>
-      <li>Tu nombre (opcional, solo para personalizar mensajes dentro de la app)</li>
-      <li>Oposición seleccionada, sexo y fecha de nacimiento</li>
-      <li>Registros de marcas físicas, tests de temario y psicotécnicos</li>
-      <li>Configuración de la app (tema visual, hora de recordatorio)</li>
+      <li><strong>Almacenamiento local:</strong> en apps sin servidor, los datos se guardan únicamente en el almacenamiento interno de tu dispositivo Android. Kairos Studio no tiene acceso a ellos bajo ninguna circunstancia.</li>
+      <li><strong>Almacenamiento en la nube:</strong> en apps con cuenta, los datos se almacenan en <strong>Supabase</strong>, un proveedor de base de datos y autenticación con infraestructura ubicada en la <strong>Unión Europea</strong>. Supabase actúa como encargado del tratamiento bajo contrato con Kairos Studio y cumple con el RGPD.</li>
     </ul>
     <div class="highlight-box">
-      <p><strong>Nota importante:</strong> estos datos nunca salen de tu dispositivo. Kairos Studio no tiene acceso a ellos en ningún momento, bajo ninguna circunstancia.</p>
+      <p><strong>Importante:</strong> en ningún caso almacenamos datos en servidores ubicados fuera de la Unión Europea sin garantías equivalentes de protección.</p>
     </div>
   </div>
 
@@ -383,13 +417,14 @@
 
   <div class="section-block">
     <div class="section-num">Artículo 04</div>
-    <h2>Permisos de la aplicación</h2>
-    <p>OpoRecord solicita únicamente los permisos estrictamente necesarios para su funcionamiento:</p>
+    <h2>Permisos del sistema</h2>
+    <p>Cada app solicita únicamente los permisos de sistema que necesita para funcionar. Nunca solicitamos permisos con fines publicitarios ni de rastreo.</p>
     <ul>
-      <li><strong>Notificaciones:</strong> para enviarte recordatorios diarios opcionales que configuras tú mismo</li>
-      <li><strong>Almacenamiento local:</strong> para guardar tus registros en el dispositivo</li>
+      <li><strong>Notificaciones:</strong> para enviarte recordatorios que tú mismo configuras (medicaciones, entrenamientos, citas). Siempre opcionales.</li>
+      <li><strong>Almacenamiento local:</strong> para guardar datos en tu dispositivo en apps sin servidor.</li>
+      <li><strong>Acceso a galería fotográfica:</strong> únicamente en apps que permiten subir fotos de perfil, y solo cuando tú inicias la acción de forma explícita.</li>
     </ul>
-    <p>No solicitamos acceso a cámara, micrófono, contactos, ubicación ni ningún otro permiso de carácter sensible.</p>
+    <p>No solicitamos acceso a cámara, micrófono, contactos, ubicación ni ningún otro permiso sensible que no sea estrictamente necesario para las funciones declaradas de la app.</p>
   </div>
 
   <div class="divider"></div>
@@ -397,8 +432,13 @@
   <div class="section-block">
     <div class="section-num">Artículo 05</div>
     <h2>Servicios de terceros</h2>
-    <p>OpoRecord <strong>no integra</strong> servicios de analíticas, publicidad, redes sociales ni rastreo de comportamiento de ningún tipo.</p>
-    <p>La aplicación se distribuye a través de Google Play Store, plataforma sujeta a la <a href="https://policies.google.com/privacy" target="_blank">política de privacidad de Google LLC</a>. Dicha política es independiente de la presente.</p>
+    <p>Dependiendo de la app, podemos integrar los siguientes servicios externos, cada uno sujeto a su propia política de privacidad:</p>
+    <ul>
+      <li><strong>Supabase</strong> (solo en apps con cuenta): proveedor de base de datos, autenticación y almacenamiento. Servidores en la UE. — <a href="https://supabase.com/privacy" target="_blank">supabase.com/privacy</a></li>
+      <li><strong>Amazon Afiliados</strong> (solo en apps donde se muestren recomendaciones de productos): los enlaces de afiliado están sujetos a la política de Amazon. Kairos Studio no accede a tus datos de compra. — <a href="https://www.amazon.es/gp/help/customer/display.html?nodeId=GX7NJQ4ZB8MHFRNJ" target="_blank">Política de privacidad de Amazon</a></li>
+      <li><strong>Google Play Store</strong>: plataforma de distribución de todas nuestras apps, sujeta a la <a href="https://policies.google.com/privacy" target="_blank">política de privacidad de Google LLC</a></li>
+    </ul>
+    <p>Las apps sin servidor como OpoRecord no integran ningún servicio de terceros de analíticas, publicidad ni rastreo.</p>
   </div>
 
   <div class="divider"></div>
@@ -407,22 +447,23 @@
     <div class="section-num">Artículo 06</div>
     <h2>Menores de edad</h2>
     <p>Nuestras aplicaciones no están dirigidas específicamente a menores de 13 años y no recopilamos intencionadamente información de dichos usuarios.</p>
-    <p>Si eres padre, madre o tutor legal y tienes indicios de que un menor ha facilitado datos personales a través de nuestras apps, contacta con nosotros de inmediato. Tomaremos las medidas oportunas para eliminar dicha información.</p>
+    <p>Si eres padre, madre o tutor legal y tienes indicios de que un menor ha creado una cuenta o facilitado datos personales a través de cualquiera de nuestras apps, contacta con nosotros de inmediato. Tomaremos las medidas oportunas para eliminar dicha información.</p>
   </div>
 
   <div class="divider"></div>
 
   <div class="section-block">
     <div class="section-num">Artículo 07</div>
-    <h2>Tus derechos</h2>
-    <p>Dado que todos los datos se almacenan localmente en tu dispositivo, tienes control total y exclusivo sobre ellos en todo momento:</p>
+    <h2>Tus derechos (RGPD)</h2>
+    <p>En virtud del Reglamento (UE) 2016/679, tienes los siguientes derechos sobre tus datos personales. La forma de ejercerlos varía según el tipo de app:</p>
     <ul>
-      <li>Puedes eliminar cualquier registro directamente desde la interfaz de la app</li>
-      <li>Puedes desinstalar la app para eliminar completamente todos los datos de tu dispositivo</li>
-      <li>No necesitas contactarnos para ejercer tu derecho de supresión (derecho al olvido)</li>
+      <li><strong>Acceso y portabilidad:</strong> puedes solicitar una copia de los datos que almacenamos sobre ti en apps con cuenta.</li>
+      <li><strong>Rectificación:</strong> puedes modificar tus datos directamente desde la configuración de la app o contactándonos.</li>
+      <li><strong>Supresión (derecho al olvido):</strong> en apps sin servidor, basta con desinstalar la app. En apps con cuenta, puedes eliminar tu cuenta y todos los datos asociados desde los ajustes de la aplicación.</li>
+      <li><strong>Limitación y oposición:</strong> puedes solicitar la limitación del tratamiento de tus datos en determinadas circunstancias contactando con nosotros.</li>
     </ul>
     <div class="highlight-box">
-      <p><strong>RGPD:</strong> En virtud del Reglamento (UE) 2016/679, tienes derecho de acceso, rectificación, supresión, limitación del tratamiento y portabilidad. Dado que no almacenamos tus datos en ningún servidor, el ejercicio de estos derechos es íntegramente local.</p>
+      <p><strong>Eliminación de cuentas en apps con servidor:</strong> al eliminar tu cuenta, se borran tus datos de nuestros servidores. Este proceso puede tardar hasta 30 días en propagarse completamente por los sistemas de copia de seguridad.</p>
     </div>
   </div>
 
@@ -430,16 +471,31 @@
 
   <div class="section-block">
     <div class="section-num">Artículo 08</div>
+    <h2>Seguridad</h2>
+    <p>Aplicamos medidas técnicas razonables para proteger los datos en todas nuestras apps:</p>
+    <ul>
+      <li>Las contraseñas en apps con cuenta se almacenan cifradas mediante hashing seguro, nunca en texto plano.</li>
+      <li>Toda comunicación entre la app y los servidores se realiza mediante HTTPS/TLS.</li>
+      <li>El acceso a los datos en la nube está restringido mediante reglas de seguridad a nivel de base de datos (Row Level Security).</li>
+      <li>En apps sin servidor, los datos nunca abandonan tu dispositivo, eliminando por completo el riesgo de exposición en tránsito o en servidores externos.</li>
+    </ul>
+    <p>Si detectas algún posible incidente de seguridad en cualquiera de nuestras apps, te pedimos que nos lo comuniques de inmediato a través del correo de contacto.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section-block">
+    <div class="section-num">Artículo 09</div>
     <h2>Modificaciones de esta política</h2>
-    <p>Kairos Studio se reserva el derecho de actualizar esta política de privacidad para reflejar cambios en nuestras prácticas o en la legislación aplicable. Cualquier modificación sustancial será comunicada mediante un aviso en la aplicación o en esta misma página, indicando la fecha de actualización.</p>
-    <p>Te recomendamos revisar periódicamente este documento. El uso continuado de la aplicación tras una actualización implica la aceptación de los nuevos términos.</p>
+    <p>Kairos Studio se reserva el derecho de actualizar esta política para reflejar cambios en nuestro catálogo de apps, en los servicios de terceros utilizados o en la legislación aplicable. Cualquier modificación sustancial será comunicada mediante un aviso en las aplicaciones afectadas o en esta página, indicando la fecha de actualización.</p>
+    <p>Te recomendamos revisar periódicamente este documento así como las políticas específicas de cada app que uses. El uso continuado de cualquiera de nuestras aplicaciones tras una actualización implica la aceptación de los nuevos términos.</p>
   </div>
 
   <!-- CONTACT -->
   <div class="section-block">
     <div class="contact-box">
       <div class="contact-box-title">¿Tienes alguna pregunta?</div>
-      <p class="contact-box-sub">Si tienes dudas sobre esta política o sobre el tratamiento de tus datos,<br>estamos disponibles para responderte.</p>
+      <p class="contact-box-sub">Si tienes dudas sobre esta política, sobre el tratamiento de tus datos<br>o quieres ejercer cualquiera de tus derechos, estamos disponibles.</p>
       <a href="mailto:aritz.codes@gmail.com" class="contact-link">✉ aritz.codes@gmail.com</a>
     </div>
   </div>
@@ -453,7 +509,7 @@
 </footer>
 
 <script>
-// ── WEBGL SHADER HERO (ported from background-paper-shaders.tsx)
+// ── WEBGL SHADER HERO
 (function() {
   const canvas = document.getElementById('shader-canvas');
   if (!canvas) return;
@@ -465,15 +521,12 @@
   const outDecl     = isWebGL2 ? 'out vec4 fragColor;\n' : '';
   const fragOut     = isWebGL2 ? 'fragColor' : 'gl_FragColor';
 
-  // ── Vertex shader (from background-paper-shaders.tsx)
   const vertSrc = glslVersion + `
 precision highp float;
 ${isWebGL2 ? 'in' : 'attribute'} vec2 a_position;
 ${isWebGL2 ? 'out' : 'varying'} vec2 vUv;
-
 uniform float time;
 uniform float intensity;
-
 void main() {
   vUv = a_position * 0.5 + 0.5;
   vec2 pos = a_position;
@@ -482,40 +535,26 @@ void main() {
   gl_Position = vec4(pos, 0.0, 1.0);
 }`;
 
-  // ── Fragment shader (from background-paper-shaders.tsx, gold+orange palette)
   const fragSrc = glslVersion + `
 precision highp float;
 ${outDecl}
 ${isWebGL2 ? 'in' : 'varying'} vec2 vUv;
-
 uniform float time;
 uniform float intensity;
-uniform vec3  color1;   // gold
-uniform vec3  color2;   // orange
-uniform vec3  color3;   // deep amber accent
-
+uniform vec3  color1;
+uniform vec3  color2;
+uniform vec3  color3;
 void main() {
   vec2 uv = vUv;
-
-  // Animated noise — identical to the tsx component
-  float noise  = sin(uv.x * 20.0 + time)        * cos(uv.y * 15.0 + time * 0.8);
+  float noise  = sin(uv.x * 20.0 + time) * cos(uv.y * 15.0 + time * 0.8);
   noise += sin(uv.x * 35.0 - time * 2.0) * cos(uv.y * 25.0 + time * 1.2) * 0.5;
-  // Extra octave for richness
   noise += sin(uv.x * 7.0  + time * 0.4) * cos(uv.y * 9.0  - time * 0.6) * 0.3;
-
-  // Mix gold → orange based on noise
   vec3 col = mix(color1, color2, noise * 0.5 + 0.5);
-  // Occasional bright flare (white-hot highlight)
   col = mix(col, color3, pow(abs(noise), 2.2) * intensity * 0.6);
-
-  // Glow: brighter at top-right
   float glow = 1.0 - length((uv - vec2(0.75, 0.35)) * vec2(1.0, 1.4));
   glow = clamp(pow(glow, 1.6), 0.0, 1.0);
-
-  // Radial vignette (dark edges)
   float vig = 1.0 - length((uv - 0.5) * 1.6);
   vig = clamp(vig, 0.0, 1.0);
-
   float alpha = glow * vig * 0.92;
   ${fragOut} = vec4(col * (glow * 0.5 + 0.5), alpha);
 }`;
@@ -544,17 +583,15 @@ void main() {
   gl.enableVertexAttribArray(aPosLoc);
   gl.vertexAttribPointer(aPosLoc, 2, gl.FLOAT, false, 0, 0);
 
-  // Uniforms
   const uTime      = gl.getUniformLocation(prog, 'time');
   const uIntensity = gl.getUniformLocation(prog, 'intensity');
   const uColor1    = gl.getUniformLocation(prog, 'color1');
   const uColor2    = gl.getUniformLocation(prog, 'color2');
   const uColor3    = gl.getUniformLocation(prog, 'color3');
 
-  // Gold, orange, warm white — slightly brighter
-  const gold   = [0.87,  0.75,  0.52];   // lighter gold
-  const orange = [0.95,  0.52,  0.18];   // brighter orange
-  const bright = [1.0,   0.92,  0.70];   // warm highlight
+  const gold   = [0.87, 0.75, 0.52];
+  const orange = [0.95, 0.52, 0.18];
+  const bright = [1.0,  0.92, 0.70];
 
   gl.enable(gl.BLEND);
   gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
@@ -572,18 +609,15 @@ void main() {
   function loop(now) {
     const t = (now - start) * 0.001;
     const intensity = 1.2 + Math.sin(t * 2.0) * 0.35;
-
     gl.clearColor(0, 0, 0, 0);
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.useProgram(prog);
     gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-
     gl.uniform1f(uTime,      t);
     gl.uniform1f(uIntensity, intensity);
     gl.uniform3fv(uColor1,   gold);
     gl.uniform3fv(uColor2,   orange);
     gl.uniform3fv(uColor3,   bright);
-
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     requestAnimationFrame(loop);
   }
