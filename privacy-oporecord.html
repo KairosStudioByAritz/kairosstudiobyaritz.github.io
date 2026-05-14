@@ -1,1 +1,605 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Política de Privacidad — Kairos Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:       #111318;
+    --bg2:      #191C23;
+    --bg3:      #1E2129;
+    --gold:     #C8A96E;
+    --gold-dim: #8A6E3E;
+    --white:    #F4F1EC;
+    --white-dim:#9A968F;
+    --border:   rgba(200,169,110,0.15);
+  }
 
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top:0; left:0; right:0; z-index:100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 24px 60px;
+    background: rgba(7,8,10,0.7);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 1rem;
+    letter-spacing: 0.1em; color: var(--white);
+    text-decoration: none;
+    display: flex; align-items: center; gap: 9px;
+  }
+  .nav-logo-dot {
+    width: 7px; height: 7px;
+    background: var(--gold); border-radius: 50%;
+    animation: pulse-dot 2.5s ease-in-out infinite;
+  }
+  @keyframes pulse-dot {
+    0%,100%{opacity:1;transform:scale(1)}
+    50%{opacity:.4;transform:scale(.6)}
+  }
+  .nav-back {
+    font-size: 0.8rem; letter-spacing: 0.08em;
+    color: var(--white-dim); text-decoration: none;
+    display: flex; align-items: center; gap: 8px;
+    transition: color .3s, gap .3s;
+    text-transform: uppercase;
+  }
+  .nav-back:hover { color: var(--gold); gap: 14px; }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 70vh;
+    display: flex; flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 60px 80px;
+    position: relative; overflow: hidden;
+    background: var(--bg);
+  }
+
+  /* WebGL shader canvas */
+  #shader-canvas {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Vignette over shader */
+  .hero::after {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(to bottom, rgba(7,8,10,0.3) 0%, rgba(7,8,10,0.0) 30%, rgba(7,8,10,0.0) 55%, rgba(7,8,10,0.85) 100%),
+      radial-gradient(ellipse 60% 80% at 0% 100%, rgba(7,8,10,0.6) 0%, transparent 70%);
+    z-index: 2; pointer-events: none;
+  }
+
+  .hero-content { position: relative; z-index: 10; max-width: 800px; }
+
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.68rem; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid var(--border);
+    padding: 7px 18px; border-radius: 2px;
+    margin-bottom: 32px;
+    opacity: 0; animation: fade-up .7s .3s forwards;
+  }
+  .hero-badge-dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--gold);
+    animation: pulse-dot 2s infinite;
+  }
+
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3rem, 7vw, 6.5rem);
+    font-weight: 300; line-height: 1.0;
+    letter-spacing: -0.02em;
+    margin-bottom: 28px;
+    opacity: 0; animation: fade-up .9s .5s cubic-bezier(.16,1,.3,1) forwards;
+  }
+  .hero-title em { font-style: italic; color: var(--gold); }
+
+  .hero-meta {
+    display: flex; align-items: center; gap: 28px;
+    flex-wrap: wrap;
+    opacity: 0; animation: fade-up .7s .8s forwards;
+  }
+  .hero-meta-item {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 0.78rem; letter-spacing: 0.06em;
+    color: var(--white-dim);
+  }
+  .hero-meta-item::before {
+    content: ''; display: inline-block;
+    width: 18px; height: 1px; background: var(--gold-dim);
+  }
+
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── SUMMARY STRIP ── */
+  .summary-strip {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 36px 60px;
+    display: flex; align-items: flex-start; gap: 20px;
+  }
+  .summary-icon {
+    font-size: 1.4rem; flex-shrink: 0; padding-top: 2px;
+  }
+  .summary-text {
+    font-size: 0.9rem; color: var(--white-dim); line-height: 1.8;
+  }
+  .summary-text strong { color: var(--gold); font-weight: 500; }
+
+  /* ── CONTENT ── */
+  .content {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 90px 60px 120px;
+  }
+
+  .section-block {
+    margin-bottom: 64px;
+    opacity: 0; transform: translateY(22px);
+    transition: opacity .6s ease, transform .6s ease;
+  }
+  .section-block.visible { opacity: 1; transform: none; }
+
+  .section-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.75rem; font-style: italic;
+    letter-spacing: 0.15em; color: var(--gold-dim);
+    margin-bottom: 10px;
+  }
+
+  h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem; font-weight: 700;
+    letter-spacing: 0.04em; color: var(--white);
+    margin-bottom: 20px;
+    text-transform: uppercase;
+  }
+
+  p {
+    font-size: 0.93rem; line-height: 1.9;
+    color: var(--white-dim); margin-bottom: 14px;
+    font-weight: 300;
+  }
+  p:last-child { margin-bottom: 0; }
+  p strong { color: var(--white); font-weight: 500; }
+  p a { color: var(--gold); text-decoration: none; border-bottom: 1px solid var(--border); }
+  p a:hover { border-color: var(--gold); }
+
+  ul { list-style: none; margin: 20px 0; }
+  ul li {
+    font-size: 0.9rem; line-height: 1.8;
+    color: var(--white-dim); font-weight: 300;
+    padding: 12px 0 12px 22px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    position: relative;
+  }
+  ul li:last-child { border-bottom: none; }
+  ul li::before {
+    content: '';
+    position: absolute; left: 0; top: 50%;
+    transform: translateY(-50%);
+    width: 5px; height: 5px;
+    border-radius: 50%; background: var(--gold-dim);
+  }
+  ul li strong { color: var(--white); font-weight: 500; }
+
+  .highlight-box {
+    background: rgba(200,169,110,0.05);
+    border: 1px solid var(--border);
+    border-left: 2px solid var(--gold);
+    padding: 20px 26px;
+    margin: 24px 0;
+  }
+  .highlight-box p {
+    margin: 0; font-size: 0.88rem;
+    color: var(--white-dim);
+  }
+  .highlight-box p strong { color: var(--gold); }
+
+  .divider {
+    height: 1px;
+    background: linear-gradient(to right, var(--gold-dim), transparent);
+    opacity: 0.2;
+    margin: 0 0 64px;
+  }
+
+  /* ── CONTACT BOX ── */
+  .contact-box {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 52px;
+    text-align: center;
+    margin-top: 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .contact-box::before {
+    content: '';
+    position: absolute; top: -1px; left: 40px; right: 40px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold), transparent);
+  }
+  .contact-box-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem; font-weight: 300;
+    margin-bottom: 12px; color: var(--white);
+  }
+  .contact-box-sub {
+    color: var(--white-dim); font-size: 0.88rem;
+    margin-bottom: 32px; line-height: 1.7;
+  }
+  .contact-link {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.78rem; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--bg); background: var(--gold);
+    padding: 14px 30px; border-radius: 2px;
+    text-decoration: none;
+    transition: transform .3s, box-shadow .3s;
+  }
+  .contact-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 36px rgba(200,169,110,.25);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    padding: 32px 60px;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 12px;
+  }
+  .footer-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 0.9rem;
+    letter-spacing: 0.1em; color: var(--white-dim);
+  }
+  .footer-copy {
+    font-size: 0.72rem; color: var(--white-dim);
+    opacity: 0.4; letter-spacing: 0.05em;
+  }
+
+  @media (max-width: 768px) {
+    nav { padding: 18px 24px; }
+    .hero { padding: 0 24px 60px; min-height: 60vh; }
+    .summary-strip { padding: 28px 24px; }
+    .content { padding: 60px 24px 80px; }
+    footer { padding: 28px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-dot"></div>
+    KAIROS STUDIO
+  </a>
+  <a href="index.html" class="nav-back">← Volver al inicio</a>
+</nav>
+
+<!-- HERO with animated paths -->
+<div class="hero">
+  <canvas id="shader-canvas"></canvas>
+
+  <div class="hero-content">
+    <div class="hero-badge"><div class="hero-badge-dot"></div> Documento legal · Vinculante</div>
+    <h1 class="hero-title">
+      Política de<br><em>Privacidad</em>
+    </h1>
+    <div class="hero-meta">
+      <div class="hero-meta-item">Última actualización: mayo de 2026</div>
+      <div class="hero-meta-item">Aplicable a OpoRecord y todas las apps de Kairos Studio</div>
+    </div>
+  </div>
+</div>
+
+<!-- SUMMARY STRIP -->
+<div class="summary-strip">
+  <div class="summary-icon">🔒</div>
+  <div class="summary-text">
+    <strong>Resumen ejecutivo:</strong> OpoRecord no recoge, almacena ni comparte ningún dato personal en servidores externos.
+    Toda la información reside exclusivamente en tu dispositivo. No hay analíticas, no hay publicidad, no hay rastreo.
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <div class="section-block">
+    <div class="section-num">Artículo 01</div>
+    <h2>Información general</h2>
+    <p>Kairos Studio es un estudio de desarrollo independiente con sede en España. Esta política de privacidad describe cómo tratamos la información en nuestras aplicaciones móviles, en particular OpoRecord.</p>
+    <p>Al instalar y usar nuestras apps, aceptas las prácticas descritas en este documento. Si no estás de acuerdo con alguno de los términos, te pedimos que desinstales la aplicación.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section-block">
+    <div class="section-num">Artículo 02</div>
+    <h2>Datos que no recopilamos</h2>
+    <p>Nuestras aplicaciones <strong>no recogen</strong> ninguno de los siguientes datos en ningún momento:</p>
+    <ul>
+      <li>Nombre, dirección de correo electrónico o cualquier dato de identificación personal</li>
+      <li>Ubicación geográfica del dispositivo</li>
+      <li>Datos de uso o analíticas enviadas a servidores externos</li>
+      <li>Información de pago o financiera de ningún tipo</li>
+      <li>Acceso a contactos, galería fotográfica, cámara o micrófono</li>
+      <li>Identificadores de dispositivo para publicidad o rastreo cruzado</li>
+    </ul>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section-block">
+    <div class="section-num">Artículo 03</div>
+    <h2>Datos almacenados localmente</h2>
+    <p>OpoRecord guarda la siguiente información <strong>únicamente en tu dispositivo</strong>, usando el almacenamiento local de Android (SharedPreferences):</p>
+    <ul>
+      <li>Tu nombre (opcional, solo para personalizar mensajes dentro de la app)</li>
+      <li>Oposición seleccionada, sexo y fecha de nacimiento</li>
+      <li>Registros de marcas físicas, tests de temario y psicotécnicos</li>
+      <li>Configuración de la app (tema visual, hora de recordatorio)</li>
+    </ul>
+    <div class="highlight-box">
+      <p><strong>Nota importante:</strong> estos datos nunca salen de tu dispositivo. Kairos Studio no tiene acceso a ellos en ningún momento, bajo ninguna circunstancia.</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section-block">
+    <div class="section-num">Artículo 04</div>
+    <h2>Permisos de la aplicación</h2>
+    <p>OpoRecord solicita únicamente los permisos estrictamente necesarios para su funcionamiento:</p>
+    <ul>
+      <li><strong>Notificaciones:</strong> para enviarte recordatorios diarios opcionales que configuras tú mismo</li>
+      <li><strong>Almacenamiento local:</strong> para guardar tus registros en el dispositivo</li>
+    </ul>
+    <p>No solicitamos acceso a cámara, micrófono, contactos, ubicación ni ningún otro permiso de carácter sensible.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section-block">
+    <div class="section-num">Artículo 05</div>
+    <h2>Servicios de terceros</h2>
+    <p>OpoRecord <strong>no integra</strong> servicios de analíticas, publicidad, redes sociales ni rastreo de comportamiento de ningún tipo.</p>
+    <p>La aplicación se distribuye a través de Google Play Store, plataforma sujeta a la <a href="https://policies.google.com/privacy" target="_blank">política de privacidad de Google LLC</a>. Dicha política es independiente de la presente.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section-block">
+    <div class="section-num">Artículo 06</div>
+    <h2>Menores de edad</h2>
+    <p>Nuestras aplicaciones no están dirigidas específicamente a menores de 13 años y no recopilamos intencionadamente información de dichos usuarios.</p>
+    <p>Si eres padre, madre o tutor legal y tienes indicios de que un menor ha facilitado datos personales a través de nuestras apps, contacta con nosotros de inmediato. Tomaremos las medidas oportunas para eliminar dicha información.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section-block">
+    <div class="section-num">Artículo 07</div>
+    <h2>Tus derechos</h2>
+    <p>Dado que todos los datos se almacenan localmente en tu dispositivo, tienes control total y exclusivo sobre ellos en todo momento:</p>
+    <ul>
+      <li>Puedes eliminar cualquier registro directamente desde la interfaz de la app</li>
+      <li>Puedes desinstalar la app para eliminar completamente todos los datos de tu dispositivo</li>
+      <li>No necesitas contactarnos para ejercer tu derecho de supresión (derecho al olvido)</li>
+    </ul>
+    <div class="highlight-box">
+      <p><strong>RGPD:</strong> En virtud del Reglamento (UE) 2016/679, tienes derecho de acceso, rectificación, supresión, limitación del tratamiento y portabilidad. Dado que no almacenamos tus datos en ningún servidor, el ejercicio de estos derechos es íntegramente local.</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section-block">
+    <div class="section-num">Artículo 08</div>
+    <h2>Modificaciones de esta política</h2>
+    <p>Kairos Studio se reserva el derecho de actualizar esta política de privacidad para reflejar cambios en nuestras prácticas o en la legislación aplicable. Cualquier modificación sustancial será comunicada mediante un aviso en la aplicación o en esta misma página, indicando la fecha de actualización.</p>
+    <p>Te recomendamos revisar periódicamente este documento. El uso continuado de la aplicación tras una actualización implica la aceptación de los nuevos términos.</p>
+  </div>
+
+  <!-- CONTACT -->
+  <div class="section-block">
+    <div class="contact-box">
+      <div class="contact-box-title">¿Tienes alguna pregunta?</div>
+      <p class="contact-box-sub">Si tienes dudas sobre esta política o sobre el tratamiento de tus datos,<br>estamos disponibles para responderte.</p>
+      <a href="mailto:aritz.codes@gmail.com" class="contact-link">✉ aritz.codes@gmail.com</a>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">KAIROS STUDIO</div>
+  <div class="footer-copy">Política de Privacidad · © 2026 · Todos los derechos reservados</div>
+</footer>
+
+<script>
+// ── WEBGL SHADER HERO (ported from background-paper-shaders.tsx)
+(function() {
+  const canvas = document.getElementById('shader-canvas');
+  if (!canvas) return;
+  const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
+  if (!gl) return;
+
+  const isWebGL2 = !!canvas.getContext('webgl2');
+  const glslVersion = isWebGL2 ? '#version 300 es\n' : '';
+  const outDecl     = isWebGL2 ? 'out vec4 fragColor;\n' : '';
+  const fragOut     = isWebGL2 ? 'fragColor' : 'gl_FragColor';
+
+  // ── Vertex shader (from background-paper-shaders.tsx)
+  const vertSrc = glslVersion + `
+precision highp float;
+${isWebGL2 ? 'in' : 'attribute'} vec2 a_position;
+${isWebGL2 ? 'out' : 'varying'} vec2 vUv;
+
+uniform float time;
+uniform float intensity;
+
+void main() {
+  vUv = a_position * 0.5 + 0.5;
+  vec2 pos = a_position;
+  pos.y += sin(pos.x * 10.0 + time) * 0.08 * intensity;
+  pos.x += cos(pos.y * 8.0  + time * 1.5) * 0.04 * intensity;
+  gl_Position = vec4(pos, 0.0, 1.0);
+}`;
+
+  // ── Fragment shader (from background-paper-shaders.tsx, gold+orange palette)
+  const fragSrc = glslVersion + `
+precision highp float;
+${outDecl}
+${isWebGL2 ? 'in' : 'varying'} vec2 vUv;
+
+uniform float time;
+uniform float intensity;
+uniform vec3  color1;   // gold
+uniform vec3  color2;   // orange
+uniform vec3  color3;   // deep amber accent
+
+void main() {
+  vec2 uv = vUv;
+
+  // Animated noise — identical to the tsx component
+  float noise  = sin(uv.x * 20.0 + time)        * cos(uv.y * 15.0 + time * 0.8);
+  noise += sin(uv.x * 35.0 - time * 2.0) * cos(uv.y * 25.0 + time * 1.2) * 0.5;
+  // Extra octave for richness
+  noise += sin(uv.x * 7.0  + time * 0.4) * cos(uv.y * 9.0  - time * 0.6) * 0.3;
+
+  // Mix gold → orange based on noise
+  vec3 col = mix(color1, color2, noise * 0.5 + 0.5);
+  // Occasional bright flare (white-hot highlight)
+  col = mix(col, color3, pow(abs(noise), 2.2) * intensity * 0.6);
+
+  // Glow: brighter at top-right
+  float glow = 1.0 - length((uv - vec2(0.75, 0.35)) * vec2(1.0, 1.4));
+  glow = clamp(pow(glow, 1.6), 0.0, 1.0);
+
+  // Radial vignette (dark edges)
+  float vig = 1.0 - length((uv - 0.5) * 1.6);
+  vig = clamp(vig, 0.0, 1.0);
+
+  float alpha = glow * vig * 0.92;
+  ${fragOut} = vec4(col * (glow * 0.5 + 0.5), alpha);
+}`;
+
+  function compileShader(type, src) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS))
+      console.error(gl.getShaderInfoLog(s));
+    return s;
+  }
+
+  const prog = gl.createProgram();
+  gl.attachShader(prog, compileShader(gl.VERTEX_SHADER,   vertSrc));
+  gl.attachShader(prog, compileShader(gl.FRAGMENT_SHADER, fragSrc));
+  gl.linkProgram(prog);
+
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER,
+    new Float32Array([-1,-1, 1,-1, -1,1, 1,1]),
+    gl.STATIC_DRAW);
+
+  const aPosLoc = gl.getAttribLocation(prog, 'a_position');
+  gl.enableVertexAttribArray(aPosLoc);
+  gl.vertexAttribPointer(aPosLoc, 2, gl.FLOAT, false, 0, 0);
+
+  // Uniforms
+  const uTime      = gl.getUniformLocation(prog, 'time');
+  const uIntensity = gl.getUniformLocation(prog, 'intensity');
+  const uColor1    = gl.getUniformLocation(prog, 'color1');
+  const uColor2    = gl.getUniformLocation(prog, 'color2');
+  const uColor3    = gl.getUniformLocation(prog, 'color3');
+
+  // Gold, orange, warm white — slightly brighter
+  const gold   = [0.87,  0.75,  0.52];   // lighter gold
+  const orange = [0.95,  0.52,  0.18];   // brighter orange
+  const bright = [1.0,   0.92,  0.70];   // warm highlight
+
+  gl.enable(gl.BLEND);
+  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+  function resize() {
+    const dpr = Math.max(1, 0.5 * devicePixelRatio);
+    canvas.width  = canvas.offsetWidth  * dpr;
+    canvas.height = canvas.offsetHeight * dpr;
+    gl.viewport(0, 0, canvas.width, canvas.height);
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  let start = performance.now();
+  function loop(now) {
+    const t = (now - start) * 0.001;
+    const intensity = 1.2 + Math.sin(t * 2.0) * 0.35;
+
+    gl.clearColor(0, 0, 0, 0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.useProgram(prog);
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+
+    gl.uniform1f(uTime,      t);
+    gl.uniform1f(uIntensity, intensity);
+    gl.uniform3fv(uColor1,   gold);
+    gl.uniform3fv(uColor2,   orange);
+    gl.uniform3fv(uColor3,   bright);
+
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+})();
+
+// ── SCROLL REVEAL
+const observer = new IntersectionObserver(entries => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('visible'), i * 60);
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.section-block').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
