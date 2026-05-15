@@ -30,7 +30,6 @@
     overflow-x: hidden;
   }
 
-  /* ── NAV ── */
   nav {
     position: fixed; top:0; left:0; right:0; z-index:100;
     display: flex; align-items: center; justify-content: space-between;
@@ -64,7 +63,6 @@
   }
   .nav-back:hover { color: var(--gold); gap: 14px; }
 
-  /* ── HERO ── */
   .hero {
     min-height: 70vh;
     display: flex; flex-direction: column;
@@ -138,7 +136,6 @@
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  /* ── SUMMARY STRIP ── */
   .summary-strip {
     background: var(--bg2);
     border-top: 1px solid var(--border);
@@ -146,15 +143,10 @@
     padding: 36px 60px;
     display: flex; align-items: flex-start; gap: 20px;
   }
-  .summary-icon {
-    font-size: 1.4rem; flex-shrink: 0; padding-top: 2px;
-  }
-  .summary-text {
-    font-size: 0.9rem; color: var(--white-dim); line-height: 1.8;
-  }
+  .summary-icon { font-size: 1.4rem; flex-shrink: 0; padding-top: 2px; }
+  .summary-text { font-size: 0.9rem; color: var(--white-dim); line-height: 1.8; }
   .summary-text strong { color: var(--gold); font-weight: 500; }
 
-  /* ── CONTENT ── */
   .content {
     max-width: 780px;
     margin: 0 auto;
@@ -218,10 +210,7 @@
     padding: 20px 26px;
     margin: 24px 0;
   }
-  .highlight-box p {
-    margin: 0; font-size: 0.88rem;
-    color: var(--white-dim);
-  }
+  .highlight-box p { margin: 0; font-size: 0.88rem; color: var(--white-dim); }
   .highlight-box p strong { color: var(--gold); }
 
   .divider {
@@ -231,7 +220,6 @@
     margin: 0 0 64px;
   }
 
-  /* ── CONTACT BOX ── */
   .contact-box {
     background: var(--bg2);
     border: 1px solid var(--border);
@@ -271,7 +259,6 @@
     box-shadow: 0 16px 36px rgba(200,169,110,.25);
   }
 
-  /* ── FOOTER ── */
   footer {
     background: var(--bg);
     border-top: 1px solid var(--border);
@@ -300,7 +287,6 @@
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
   <a href="index.html" class="nav-logo">
     <div class="nav-logo-dot"></div>
@@ -309,15 +295,11 @@
   <a href="index.html" class="nav-back">← Volver al inicio</a>
 </nav>
 
-<!-- HERO -->
 <div class="hero">
   <canvas id="shader-canvas"></canvas>
-
   <div class="hero-content">
     <div class="hero-badge"><div class="hero-badge-dot"></div> Documento legal · Vinculante</div>
-    <h1 class="hero-title">
-      Política de<br><em>Privacidad</em>
-    </h1>
+    <h1 class="hero-title">Política de<br><em>Privacidad</em></h1>
     <div class="hero-meta">
       <div class="hero-meta-item">Última actualización: mayo de 2026</div>
       <div class="hero-meta-item">Aplicable a Pawly · Desarrollada por Kairos Studio</div>
@@ -325,7 +307,6 @@
   </div>
 </div>
 
-<!-- SUMMARY STRIP -->
 <div class="summary-strip">
   <div class="summary-icon">🔒</div>
   <div class="summary-text">
@@ -333,7 +314,6 @@
   </div>
 </div>
 
-<!-- CONTENT -->
 <div class="content">
 
   <div class="section-block">
@@ -425,7 +405,7 @@
     <p>Pawly integra los siguientes servicios externos, cada uno sujeto a su propia política de privacidad:</p>
     <ul>
       <li><strong>Supabase:</strong> proveedor de base de datos, autenticación y almacenamiento. Actúa como encargado del tratamiento bajo las directrices de Kairos Studio. Servidores en la UE. — <a href="https://supabase.com/privacy" target="_blank">supabase.com/privacy</a></li>
-      <li><strong>Amazon Afiliados:</strong> Pawly puede mostrar enlaces a productos de Amazon (p. ej., alimentos, accesorios). Estos son enlaces de afiliado; si realizas una compra a través de ellos, Amazon puede registrar dicha transacción. Kairos Studio no tiene acceso a tus datos de compra. — <a href="https://www.amazon.es/gp/help/customer/display.html?nodeId=GX7NJQ4ZB8MHFRNJ" target="_blank">Política de privacidad de Amazon</a></li>
+      <li><strong>Amazon Afiliados:</strong> Pawly puede mostrar enlaces a productos de Amazon. Estos son enlaces de afiliado; si realizas una compra a través de ellos, Amazon puede registrar dicha transacción. Kairos Studio no tiene acceso a tus datos de compra. — <a href="https://www.amazon.es/gp/help/customer/display.html?nodeId=GX7NJQ4ZB8MHFRNJ" target="_blank">Política de privacidad de Amazon</a></li>
       <li><strong>Google Play Store:</strong> plataforma de distribución de la app, sujeta a la <a href="https://policies.google.com/privacy" target="_blank">política de privacidad de Google LLC</a></li>
     </ul>
     <div class="highlight-box">
@@ -444,7 +424,7 @@
 
   <div class="divider"></div>
 
-  <div class="section-block">
+  <div class="section-block" id="eliminacion">
     <div class="section-num">Artículo 09</div>
     <h2>Tus derechos (RGPD)</h2>
     <p>En virtud del Reglamento (UE) 2016/679, tienes los siguientes derechos sobre tus datos personales:</p>
@@ -457,6 +437,9 @@
     </ul>
     <div class="highlight-box">
       <p><strong>Eliminación de cuenta:</strong> al eliminar tu cuenta desde los ajustes de Pawly, se borran de nuestros servidores tu email, nombre, datos de mascotas, registros y fotos. Este proceso puede tardar hasta 30 días en propagarse completamente por los sistemas de copia de seguridad.</p>
+    </div>
+    <div class="highlight-box">
+      <p><strong>Solicitar eliminación de cuenta:</strong> para solicitar la eliminación de tu cuenta y todos tus datos asociados, contacta con nosotros en <a href="mailto:aritz.codes@gmail.com?subject=Solicitud eliminación de cuenta Pawly">aritz.codes@gmail.com</a> indicando el email con el que te registraste. Procesaremos tu solicitud en un plazo máximo de 30 días.</p>
     </div>
   </div>
 
@@ -484,7 +467,6 @@
     <p>Cualquier modificación sustancial será comunicada mediante un aviso en la aplicación o en esta misma página, indicando la fecha de actualización. Te recomendamos revisarla periódicamente. El uso continuado de Pawly tras una actualización implica la aceptación de los nuevos términos.</p>
   </div>
 
-  <!-- CONTACT -->
   <div class="section-block">
     <div class="contact-box">
       <div class="contact-box-title">¿Tienes alguna pregunta?</div>
@@ -495,14 +477,12 @@
 
 </div>
 
-<!-- FOOTER -->
 <footer>
   <div class="footer-logo">PAWLY · KAIROS STUDIO</div>
   <div class="footer-copy">Política de Privacidad · © 2026 · Todos los derechos reservados</div>
 </footer>
 
 <script>
-// ── WEBGL SHADER HERO
 (function() {
   const canvas = document.getElementById('shader-canvas');
   if (!canvas) return;
@@ -617,7 +597,6 @@ void main() {
   requestAnimationFrame(loop);
 })();
 
-// ── SCROLL REVEAL
 const observer = new IntersectionObserver(entries => {
   entries.forEach((e, i) => {
     if (e.isIntersecting) {
